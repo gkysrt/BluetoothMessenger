@@ -1,0 +1,8 @@
+# python 3.6.9
+# RUN: "pip3 install -r requirements.txt"
+
+# sudo apt-get install libbluetooth-dev
+pybluez==0.23
+PySide2==5.11.0
+PyInstaller==3.4
+fbs
