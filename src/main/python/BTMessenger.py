@@ -1,6 +1,7 @@
 import sys
-from src.main.python import CommandParser, ResponseReceiver
+import CommandParser
 import bluetooth
+import ResponseReceiver
 
 if __name__ == '__main__':
 	commandParser = CommandParser.CommandParser("EVC Bluetooth Messenger")
