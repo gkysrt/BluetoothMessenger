@@ -4,23 +4,23 @@ import BaseCommand
 
 
 class Command(BaseCommand.BaseCommand):
-	def __init__(self):
-		super().__init__()
+    def __init__(self):
+        super().__init__()
 
-	options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
-	cmd = "delay-charge"
+    options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
+    cmd = "delay-charge"
 
-	@classmethod
-	def options(cls):
-		return cls.options
+    @classmethod
+    def options(cls):
+        return cls.options
 
-	@classmethod
-	def command(cls):
-		return cls.cmd
+    @classmethod
+    def command(cls):
+        return cls.cmd
 
-	@staticmethod
-	def info():
-		return """delay-charge [on/off] [options]: Delay charge command, second arg on off, a delay amount should be specified
+    @staticmethod
+    def info():
+        return """delay-charge [on/off] [options]: Delay charge command, second arg on off, a delay amount should be specified
             OPTIONS:
                 -h / --help: Show help
                 -c / --connector: Connector ID (default connector ID is 1)
@@ -31,81 +31,81 @@ class Command(BaseCommand.BaseCommand):
                 delay-charge on -m 60 -c 1
             """
 
-	def execute(self, argList, **kwargs):
-		if '-h' in argList or '--help' in argList:
-			print(self.info())
-			return {"command": self.cmd, "result": "failed"}
+    def execute(self, argList, **kwargs):
+        if '-h' in argList or '--help' in argList:
+            print(self.info())
+            return {"command": self.cmd, "result": "failed"}
 
-		delayEnabled = argList.pop(0)
+        delayEnabled = argList.pop(0)
 
-		socket = kwargs.get('socket')
-		connectorID = 1
+        socket = kwargs.get('socket')
+        connectorID = 1
 
-		delayTime = 0
-		timeUnit = "minute"
+        delayTime = 0
+        timeUnit = "minute"
 
-		for i in range(len(argList)):
-			if argList[i] == "-c" or argList[i] == "--connector":
-				if argList[i + 1]:
-					connectorID = argList[i + 1]
+        for i in range(len(argList)):
+            if argList[i] == "-c" or argList[i] == "--connector":
+                if argList[i + 1]:
+                    connectorID = argList[i + 1]
 
-		for i in range(len(argList)):
-			if argList[i] == "-m" or argList[i] == "--minute":
-				if argList[i + 1]:
-					delayTime = int(argList[i + 1])
-					break
+        for i in range(len(argList)):
+            if argList[i] == "-m" or argList[i] == "--minute":
+                if argList[i + 1]:
+                    delayTime = int(argList[i + 1])
+                    break
 
-			elif argList[i] == "-h" or argList[i] == "--hour":
-				if argList[i + 1]:
-					delayTime = int(argList[i + 1])
-					delayTime = delayTime * 60
-					# timeUnit = "hour"
-					break
+            elif argList[i] == "-h" or argList[i] == "--hour":
+                if argList[i + 1]:
+                    delayTime = int(argList[i + 1])
+                    delayTime = delayTime * 60
+                    # timeUnit = "hour"
+                    break
 
-			elif argList[i] == "-s" or argList[i] == "--second":
-				if argList[i + 1]:
-					delayTime = int(argList[i + 1])
-					# timeUnit = "second"
-					delayTime = delayTime / 60
-					break
+            elif argList[i] == "-s" or argList[i] == "--second":
+                if argList[i + 1]:
+                    delayTime = int(argList[i + 1])
+                    # timeUnit = "second"
+                    delayTime = delayTime / 60
+                    break
 
-		delayChargeRequest = None
+        delayChargeRequest = None
 
-		if delayEnabled == "on":
-			# TODO: What is step, unit, min, max scale
-			delayChargeRequest = {"chargePoints":
-				[{
-					"connectorId": connectorID,
-					"programs":
-						[{"key": "Charger.EVC.Program.DelayCharge",
-						  "value": "true"}],
-					"options": [{
-						"key": "Charger.EVC.Option.DelayChargeTime",
-						"valueType": "Integer",
-						"value": delayTime}
-					]}
-				]}
+        if delayEnabled == "on":
+            # TODO: What is step, unit, min, max scale
+            delayChargeRequest = {"chargePoints":
+                [{
+                    "connectorId": connectorID,
+                    "programs":
+                        [{"key": "Charger.EVC.Program.DelayCharge",
+                          "value": "true"}],
+                    "options": [{
+                        "key": "Charger.EVC.Option.DelayChargeTime",
+                        "valueType": "Integer",
+                        "value": delayTime}
+                    ]}
+                ]}
 
-		elif delayEnabled == "off":
-			delayChargeRequest = {
-				"chargePoints": [{
-					"connectorId": connectorID,
-					"programs": [{
-						"key": "Charger.EVC.Program.DelayCharge",
-						"value": "false"
-					}]
-				}]
-			}
+        elif delayEnabled == "off":
+            delayChargeRequest = {
+                "chargePoints": [{
+                    "connectorId": connectorID,
+                    "programs": [{
+                        "key": "Charger.EVC.Program.DelayCharge",
+                        "value": "false"
+                    }]
+                }]
+            }
 
-		if delayChargeRequest:
-			try:
-				socket.send(json.dumps(delayChargeRequest).encode())
-				print("Delay charge is successfully requested {}: {} minutes".format(delayEnabled, str(delayTime)))
-				return {"command": self.cmd, "result": "successful"}
+        if delayChargeRequest:
+            try:
+                socket.send(json.dumps(delayChargeRequest).encode())
+                print("Delay charge is successfully requested {}: {} minutes".format(delayEnabled, str(delayTime)))
+                return {"command": self.cmd, "result": "successful"}
 
-			except Exception as e:
-				print("Failed to send delay charge request: ", str(e))
-				return {"command": self.cmd, "result": "failed"}
-		else:
-			print('Second argument of delay-charge command is "on" or "off"')
-			return {"command": self.cmd, "result": "failed"}
+            except Exception as e:
+                print("Failed to send delay charge request: ", str(e))
+                return {"command": self.cmd, "result": "failed"}
+        else:
+            print('Second argument of delay-charge command is "on" or "off"')
+            return {"command": self.cmd, "result": "failed"}
