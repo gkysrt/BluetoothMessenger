@@ -1,6 +1,8 @@
+from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from widgets import ListHeaderWidget, ListView, DeviceWidget
 from models import ModelFilter
+from utility import QssLoader
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -12,11 +14,19 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listView = None
 		self.__listHeader = None
 		self.__model = None
+		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
 		self.setupUi()
 		self.initialize()
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
+		# Obtain app core
+		appCore = ApplicationCore.getInstance()
+
+		# Ask application core path of 'DefaultStyle.qss' and pass it to QssLoader's loadQss function
+		# Set return value as style sheet of main window
+		self.setStyleSheet(self.__qssLoader.loadQss(appCore.getQss('DefaultStyle.qss')))
+
 		centralWidget = QtWidgets.QWidget(self)
 		centralLayout = QtWidgets.QHBoxLayout(centralWidget)
 		centralLayout.setSpacing(0)

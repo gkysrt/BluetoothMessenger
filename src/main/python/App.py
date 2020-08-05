@@ -6,7 +6,6 @@ import sys
 if __name__ == '__main__':
     appctxt = ApplicationCore.ApplicationCore.getInstance()
 
-    print(id(appctxt))
     appctxt.app.setOrganizationName("Vestel")
     appctxt.app.setOrganizationDomain("vestel.com.tr")
     appctxt.app.setApplicationName("EVC Bluetooth Messenger")

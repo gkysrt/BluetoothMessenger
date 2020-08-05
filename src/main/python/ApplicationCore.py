@@ -1,3 +1,6 @@
+# ApplicationCore is the application context itself (inherited) with added functionality of path providing
+# and also designed to be Singleton
+
 from fbs_runtime.application_context.PySide2 import ApplicationContext
 import os
 

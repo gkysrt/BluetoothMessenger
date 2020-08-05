@@ -1,19 +1,38 @@
-from ApplicationCore import ApplicationCore
-
-
 class QssLoader(object):
-    def __init__(self):
+    def __init__(self, shouldParse = False):
         super(QssLoader, self).__init__()
-        self.loadQss()
+        self.__shouldParse = shouldParse
+        self.__qssFunctionDict = dict()
 
-    @staticmethod
-    def loadQss():
-        appCore = ApplicationCore.getInstance()
+    def loadQss(self, qssPath):
+        qssFile = None
 
         try:
-            qssFile = open(appCore.getQss('DefaultStyle.qss'))
+            qssFile = open(qssPath)
 
         except FileNotFoundError as e:
-            print(e)
+            # TODO: Log print
+            print("Error opening qss file: '{}' - {}".format(qssFile, str(e)))
 
-        return qssFile.read()
+        qssString = ""
+
+        if qssFile:
+            qssString = qssFile.read()
+
+        if self.__shouldParse:
+            qssString = self.parse(qssString)
+
+        return qssString
+
+    def setParseEnabled(self, enabled):
+        self.__shouldParse = bool(enabled)
+
+    def parse(self, qssString):
+        # TODO: Parse qss string here
+        return qssString
+
+    def addFunction(self, key, func):
+        self.__qssFunctionDict[key] = func
+
+    def removeFunc(self, key):
+        self.__qssFunctionDict.pop(key)
