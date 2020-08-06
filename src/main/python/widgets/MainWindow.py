@@ -1,5 +1,6 @@
 from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
+from delegates import ListViewDelegate
 from widgets import ListHeaderWidget, ListView, DeviceWidget
 from models import ModelFilter
 from utility import QssLoader
@@ -43,6 +44,10 @@ class MainWindow(QtWidgets.QMainWindow):
 		# ListView that displays available devices and control  panel named listHeader
 		self.__listView = ListView.ListView(listWindow)
 		self.__listHeader = ListHeaderWidget.ListHeaderWidget(listWindow)
+
+		# Initiate item delegate and set it as listView delegate
+		listViewDelegate = ListViewDelegate.ListViewDelegate(self)
+		self.__listView.setItemDelegate(listViewDelegate)
 
 		listWindowLayout.addWidget(self.__listHeader)
 		listWindowLayout.addWidget(self.__listView)

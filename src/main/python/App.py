@@ -11,7 +11,7 @@ if __name__ == '__main__':
     appctxt.app.setApplicationName("EVC Bluetooth Messenger")
 
     window = MainWindow.MainWindow()
-    window.setFixedSize(800, 450)
+    window.setMinimumSize(800, 450)
     window.show()
 
     #TODO: to be deleted

@@ -1,4 +1,5 @@
 from models.devices import BaseDevice
+from models.Enum import DeviceTypes
 
 
 class EVCDevice(BaseDevice.BaseDevice):
@@ -11,3 +12,7 @@ class EVCDevice(BaseDevice.BaseDevice):
 
 	def setStatus(self, status):
 		self.__status = status
+
+	@staticmethod
+	def deviceType():
+		return DeviceTypes.EVC

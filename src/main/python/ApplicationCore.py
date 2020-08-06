@@ -32,7 +32,7 @@ class ApplicationCore(ApplicationContext):
 		return self.get_resource('qss')
 
 	def iconPath(self):
-		self.get_resource('icons')
+		return self.get_resource('icons')
 
 	@staticmethod
 	def getInstance():

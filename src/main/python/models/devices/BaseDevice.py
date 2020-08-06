@@ -1,3 +1,5 @@
+from models.Enum import DeviceTypes
+
 class BaseDevice(object):
 	def __init__(self, name = "", mac = "", isConnected = False):
 		super().__init__()
@@ -22,3 +24,7 @@ class BaseDevice(object):
 
 	def setConnected(self, connected):
 		self.__isConnected = bool(connected)
+
+	@staticmethod
+	def deviceType():
+		return DeviceTypes.UNDEFINED
