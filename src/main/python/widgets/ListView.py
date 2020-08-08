@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 
 
 class ListView(QtWidgets.QListView):
@@ -6,6 +6,7 @@ class ListView(QtWidgets.QListView):
 		super().__init__(parent)
 		self.initSignalsAndSlots()
 		self.setStyleSheet("border:1px solid blue;")
+		# self.setCursor(QtCore.Qt.PointingHandCursor)
 
 	def initSignalsAndSlots(self):
 		pass

@@ -1,5 +1,6 @@
 from models.Enum import DeviceTypes
 
+
 class BaseDevice(object):
 	def __init__(self, name = "", mac = "", isConnected = False):
 		super().__init__()

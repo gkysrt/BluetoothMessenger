@@ -5,7 +5,7 @@ from models.devices import BaseDevice, EVCDevice
 class ListModel(QtCore.QAbstractListModel):
 	def __init__(self, parent = None):
 		super().__init__(parent)
-		self.__deviceList = [EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", "ok")]
+		self.__deviceList = [EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", False, "ok")]
 
 	def rowCount(self, index):
 		# No regard to parent index

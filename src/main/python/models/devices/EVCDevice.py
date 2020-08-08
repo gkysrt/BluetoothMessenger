@@ -3,8 +3,8 @@ from models.Enum import DeviceTypes
 
 
 class EVCDevice(BaseDevice.BaseDevice):
-	def __init__(self, name = "", mac = "", status = ""):
-		super().__init__(name, mac)
+	def __init__(self, name = "", mac = "", isConnected = False, status = ""):
+		super().__init__(name, mac, isConnected)
 		self.__status = status
 
 	def status(self):
