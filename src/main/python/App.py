@@ -1,15 +1,20 @@
 import ApplicationCore
 from widgets import MainWindow
+from PySide2 import QtGui
 import sys
 
 
 if __name__ == '__main__':
     appctxt = ApplicationCore.ApplicationCore.getInstance()
-
     appctxt.app.setOrganizationName("Vestel")
     appctxt.app.setOrganizationDomain("vestel.com.tr")
     appctxt.app.setApplicationName("EVC Bluetooth Messenger")
 
+    # Add custom font to application
+    pathToFont = appctxt.get_resource('Muli-Light.ttf')
+    QtGui.QFontDatabase.addApplicationFont(pathToFont)
+
+    # Start main window
     window = MainWindow.MainWindow()
     window.setMinimumSize(800, 450)
     window.show()

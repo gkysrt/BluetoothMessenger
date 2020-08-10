@@ -1,11 +1,11 @@
 from PySide2 import QtCore
-from models.devices import BaseDevice, EVCDevice
+from models.devices import BaseDevice, EVCDevice, HeadphoneDevice, LaptopDevice, PhoneDevice
 
 
 class ListModel(QtCore.QAbstractListModel):
 	def __init__(self, parent = None):
 		super().__init__(parent)
-		self.__deviceList = [EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", True, "ok"), EVCDevice.EVCDevice("asd", "aa:aa:sg:sd:4r", False, "ok")]
+		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:SD:4R:77", False, "ok"), BaseDevice.BaseDevice("Unnamed", "XZ:4G:F3:F1:LF:55", False), PhoneDevice.PhoneDevice("iPhone", "KL:LF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("asd", "aa:aa:sg:sd:4r", True), LaptopDevice.LaptopDevice("asd", "aa:aa:sg:sd:4r", False)]
 
 	def rowCount(self, index):
 		# No regard to parent index

@@ -17,25 +17,24 @@ class DeviceWidget(QtWidgets.QLabel):
 		mainLayout = QtWidgets.QHBoxLayout(self)
 
 		self.__iconLabel = QtWidgets.QLabel(self)
-		self.__iconLabel.setStyleSheet("border: 1px solid cyan;")
-
 		self.__iconLabel.setText("ICON HERE")
+		self.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		detailWidget = QtWidgets.QWidget(self)
 		detailLayout = QtWidgets.QVBoxLayout(detailWidget)
 		detailLayout.setContentsMargins(0, 0, 0, 0)
 
 		self.__nameLabel = QtWidgets.QLabel(detailWidget)
-		self.__nameLabel.setStyleSheet("border: 1px solid cyan;")
+		self.__nameLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		self.__macLabel = QtWidgets.QLabel(detailWidget)
-		self.__macLabel.setStyleSheet("border: 1px solid blue;")
+		self.__macLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		self.__statusLabel = QtWidgets.QLabel(detailWidget)
-		self.__statusLabel.setStyleSheet("border: 1px solid green;")
+		self.__statusLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		self.__durationLabel = QtWidgets.QLabel(detailWidget)
-		self.__durationLabel.setStyleSheet("border: 1px solid purple;")
+		self.__durationLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		self.setDuration("")
 		self.setMac("")
