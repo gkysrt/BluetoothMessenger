@@ -25,11 +25,11 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		self.__iconHeadphones = QtGui.QPixmap()
 		self.__iconLaptop = QtGui.QPixmap()
 
-		self.__nameFont = QtGui.QFont('MuliLight')
+		self.__nameFont = QtGui.QFont('Muli Light')
 		self.__nameFont.setBold(True)
-		self.__nameFont.setPointSize(12)
+		# self.__nameFont.setPointSize(12)
 
-		self.__macFont = QtGui.QFont('MuliLight')
+		self.__macFont = QtGui.QFont('Muli Light')
 
 		self.__iconConnected = QtGui.QPixmap(appCore.getIcon('check_icon.png'))
 

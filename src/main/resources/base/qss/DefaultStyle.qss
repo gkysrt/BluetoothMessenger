@@ -2,7 +2,7 @@
 */
 QWidget
 {
-    font-family: MuliLight;
+    font-family: "Muli Light";
 }
 QLabel
 {
