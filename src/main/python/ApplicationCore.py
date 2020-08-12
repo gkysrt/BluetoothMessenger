@@ -2,6 +2,7 @@
 # and also designed to be Singleton
 
 from fbs_runtime.application_context.PySide2 import ApplicationContext
+from fbs_runtime.application_context import is_frozen
 import os
 
 
@@ -25,6 +26,11 @@ class ApplicationCore(ApplicationContext):
 	def getPlugin(self, plugin = ''):
 		return self.get_resource(os.path.join('plugins'), plugin)
 
+	# def getCommand(self, command = ''):
+		# Should match case names be given?
+		# commandName = command.upper()
+		# commandName = commandName + ".py" if not commandName.endswith('.PY', -3) else commandName
+
 	def pluginPath(self):
 		return self.get_resource('plugins')
 
@@ -33,6 +39,9 @@ class ApplicationCore(ApplicationContext):
 
 	def iconPath(self):
 		return self.get_resource('icons')
+
+	def commandsPath(self):
+		return self.get_resource(os.path.join('plugins', 'commands')) if is_frozen() else os.path.join(os.path.dirname(__file__), 'commands')
 
 	@staticmethod
 	def getInstance():
