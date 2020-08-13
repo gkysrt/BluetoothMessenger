@@ -3,8 +3,8 @@ import bluetooth
 
 
 class Plugin(BaseCommand.BaseCommand):
-	def __init__(self):
-		super().__init__()
+	def __init__(self, parent=None):
+		super().__init__(parent)
 
 	__options = ("-h", "--help", "-u", "--uuid", "-n", "--name", "-m", "--mac")
 	__cmd = "service"

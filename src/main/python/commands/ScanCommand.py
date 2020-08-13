@@ -3,8 +3,8 @@ import bluetooth
 
 
 class Plugin(BaseCommand.BaseCommand):
-	def __init__(self):
-		super().__init__()
+	def __init__(self, parent=None):
+		super().__init__(parent)
 
 	__options = ("-h", "--help", "-f", "--flush", "-d", "--duration", "-c", "--class", "-h", "--help")
 	__cmd = "scan"

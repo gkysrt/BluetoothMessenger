@@ -67,8 +67,13 @@ class MainWindow(QtWidgets.QMainWindow):
 		buttonContainerLayout.setContentsMargins(8, 0, 8, 0)
 
 		self.__authorizeButton = QtWidgets.QPushButton(buttonContainerWidget)
+		self.__authorizeButton.setText("Authorize")
+
 		self.__startChargeButton = QtWidgets.QPushButton(buttonContainerWidget)
+		self.__startChargeButton.setText("Start")
+
 		self.__stopChargeButton = QtWidgets.QPushButton(buttonContainerWidget)
+		self.__stopChargeButton.setText("Stop")
 
 		buttonContainerLayout.addWidget(self.__authorizeButton)
 		buttonContainerLayout.addWidget(self.__startChargeButton)
@@ -84,7 +89,9 @@ class MainWindow(QtWidgets.QMainWindow):
 		centralLayout.addWidget(deviceWindow)
 
 	def initSignalsAndSlots(self):
-		pass
+		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
+		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
+		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
 
 	def initialize(self):
 		self.__model = ModelFilter.ModelFilter(self)
@@ -93,5 +100,13 @@ class MainWindow(QtWidgets.QMainWindow):
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Escape:
 			self.close()
-
 		super().keyPressEvent(event)
+
+	def onStopButtonClick(self, checked = False):
+		pass
+
+	def onStartButtonClick(self, checked = False):
+		pass
+
+	def onAuthorizeButtonClick(self, checked = False):
+		pass

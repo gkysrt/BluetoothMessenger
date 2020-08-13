@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 
 
 class DeviceWidget(QtWidgets.QLabel):
@@ -18,6 +18,7 @@ class DeviceWidget(QtWidgets.QLabel):
 		self.setMaximumHeight(200)
 		mainLayout = QtWidgets.QHBoxLayout(self)
 		self.__iconLabel = QtWidgets.QLabel(self)
+		self.__iconLabel.setAlignment(QtCore.Qt.AlignCenter)
 		self.__iconLabel.setText("ICON HERE")
 		self.__iconLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 

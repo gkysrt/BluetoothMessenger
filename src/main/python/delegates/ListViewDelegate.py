@@ -24,14 +24,13 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		self.__iconPhone = QtGui.QPixmap(appCore.getIcon('phone_device.png'))
 		self.__iconHeadphones = QtGui.QPixmap()
 		self.__iconLaptop = QtGui.QPixmap()
+		self.__iconConnected = QtGui.QPixmap(appCore.getIcon('check_icon.png'))
 
 		self.__nameFont = QtGui.QFont('Muli Light')
 		self.__nameFont.setBold(True)
 		# self.__nameFont.setPointSize(12)
 
 		self.__macFont = QtGui.QFont('Muli Light')
-
-		self.__iconConnected = QtGui.QPixmap(appCore.getIcon('check_icon.png'))
 
 	def paint(self, painter, option, index):
 		super().paint(painter, option, index)
@@ -54,7 +53,6 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 
 		if option.state & QtWidgets.QStyle.State_MouseOver:
 			painter.fillRect(rectangle, self.__evenColor.lighter(120)) if isEvenNr else painter.fillRect(rectangle, self.__evenColor.lighter(120))
-
 		elif option.state & QtWidgets.QStyle.State_Selected:
 			print("selected olduk hanıım")
 

@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     # Start main window
     window = MainWindow.MainWindow()
-    window.setMinimumSize(800, 450)
+    window.setMinimumSize(960, 540)
     window.show()
 
     #TODO: to be deleted

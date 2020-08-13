@@ -26,10 +26,10 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         internalCommandPluginsDict = {}
         for subclass in BaseCommand.__subclasses__():
-            internalCommandPluginsDict[subclass.command()] = subclass()
+            internalCommandPluginsDict[subclass.name()] = subclass()
 
         internalCommandPluginsDict.update(externalCommandPluginsDict)
-        print(internalCommandPluginsDict)
+        self.__cmdDict = internalCommandPluginsDict
 
     def setupUi(self):
         mainLayout = QtWidgets.QVBoxLayout(self)
@@ -38,6 +38,10 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         self.__tabWidget = QtWidgets.QTabWidget(self)
         self.__tabWidget.setMovable(False)
+
+        # Setup tabs
+        for key in self.__cmdDict.keys():
+            self.__tabWidget.addTab(self.__cmdDict.get(key), key)
 
         mainLayout.addWidget(titleLabel)
         mainLayout.addWidget(self.__tabWidget)

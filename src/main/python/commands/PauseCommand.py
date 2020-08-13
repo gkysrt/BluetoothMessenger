@@ -3,8 +3,8 @@ import BaseCommand
 
 
 class Plugin(BaseCommand.BaseCommand):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
 
     __options = ("-h", "-c", "--connector", "--help")
     __cmd = "pause-charge"

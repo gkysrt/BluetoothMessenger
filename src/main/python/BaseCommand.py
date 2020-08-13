@@ -1,8 +1,12 @@
+from PySide2 import QtWidgets
 # Commands are implemented in a plugin fashion, every time a file inherits BaseCommand inside /commands file,
 # it'll be added and evaluated as an argument
 
 
-class BaseCommand(object):
+class BaseCommand(QtWidgets.QWidget):
+    def __init__(self, parent = None):
+        super().__init__(parent)
+
     @classmethod
     def options(cls):
         """
