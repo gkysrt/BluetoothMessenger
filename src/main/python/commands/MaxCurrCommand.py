@@ -1,20 +1,25 @@
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "--help")
-    cmd = "max-current"
+    __options = ("-h", "--help")
+    __cmd = "max-current"
+    __name = "Max Current"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -27,7 +32,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         # TODO: INCOMPLETE
         maxCurrent = int(argList.pop(0))

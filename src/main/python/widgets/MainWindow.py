@@ -1,9 +1,10 @@
 from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
-from widgets import ListHeaderWidget, ListView, DeviceWidget
+from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
 from models import ModelFilter
 from utility import QssLoader
+from utility.PluginReader import PluginReader
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -54,12 +55,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		# Construct right-side container widget
 		deviceWindow = QtWidgets.QLabel(self)
+		# deviceWindow.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 		deviceWindowLayout = QtWidgets.QVBoxLayout(deviceWindow)
+		deviceWindowLayout.setSpacing(0)
+		deviceWindowLayout.setContentsMargins(0, 0, 0, 0)
 
 		deviceWidget = DeviceWidget.DeviceWidget(deviceWindow)
 
 		buttonContainerWidget = QtWidgets.QWidget(deviceWindow)
 		buttonContainerLayout = QtWidgets.QHBoxLayout(buttonContainerWidget)
+		buttonContainerLayout.setContentsMargins(8, 0, 8, 0)
 
 		self.__authorizeButton = QtWidgets.QPushButton(buttonContainerWidget)
 		self.__startChargeButton = QtWidgets.QPushButton(buttonContainerWidget)
@@ -69,8 +74,11 @@ class MainWindow(QtWidgets.QMainWindow):
 		buttonContainerLayout.addWidget(self.__startChargeButton)
 		buttonContainerLayout.addWidget(self.__stopChargeButton)
 
+		commandPanelWidget = CommandPanelWidget.CommandPanelWidget(deviceWindow)
+
 		deviceWindowLayout.addWidget(deviceWidget)
 		deviceWindowLayout.addWidget(buttonContainerWidget)
+		deviceWindowLayout.addWidget(commandPanelWidget)
 
 		centralLayout.addWidget(listWindow)
 		centralLayout.addWidget(deviceWindow)

@@ -14,11 +14,12 @@ class DeviceWidget(QtWidgets.QLabel):
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
+		self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+		self.setMaximumHeight(200)
 		mainLayout = QtWidgets.QHBoxLayout(self)
-
 		self.__iconLabel = QtWidgets.QLabel(self)
 		self.__iconLabel.setText("ICON HERE")
-		self.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		self.__iconLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
 		detailWidget = QtWidgets.QWidget(self)
 		detailLayout = QtWidgets.QVBoxLayout(detailWidget)
@@ -36,6 +37,9 @@ class DeviceWidget(QtWidgets.QLabel):
 		self.__durationLabel = QtWidgets.QLabel(detailWidget)
 		self.__durationLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
 
+		# bottomSpacerWidget = QtWidgets.QWidget(detailWidget)
+		# bottomSpacerWidget.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+
 		self.setDuration("")
 		self.setMac("")
 		self.setName("")
@@ -45,6 +49,7 @@ class DeviceWidget(QtWidgets.QLabel):
 		detailLayout.addWidget(self.__macLabel)
 		detailLayout.addWidget(self.__statusLabel)
 		detailLayout.addWidget(self.__durationLabel)
+		# detailLayout.addWidget(bottomSpacerWidget)
 
 		mainLayout.addWidget(self.__iconLabel)
 		mainLayout.addWidget(detailWidget)
@@ -68,3 +73,7 @@ class DeviceWidget(QtWidgets.QLabel):
 	def setDuration(self, time):
 		# TODO: Duration calculation here
 		self.__durationLabel.setText("Duration: %s".format(str(time)))
+
+	def resizeEvent(self, event):
+		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
+		super().resizeEvent(event)

@@ -3,7 +3,6 @@
 
 
 class BaseCommand(object):
-
     @classmethod
     def options(cls):
         """
@@ -25,6 +24,17 @@ class BaseCommand(object):
         """
         raise Exception("Plugin inherits BaseCommand should return a string to be used as argument")
 
+    @classmethod
+    def name(cls):
+        """
+        :param
+        :return str
+        name() function should simply return the name of plugin that'll be shown on display of UI.
+        Override this function and return a string to name your command on UI.
+        If not reimplemented, name will be blank.
+        """
+        return ''
+
     @staticmethod
     def info():
         """
@@ -32,6 +42,16 @@ class BaseCommand(object):
         :return str
         info() function simply returns a description for the argument.
         This is optional.
+        """
+
+    def setupUi(self):
+        """
+        :param
+        :return
+        A free space is given inside command panel widget to override setupUi() method and fill free space.
+        This way, visualization of plugin part is fully customizable. You can take inputs from user and
+        use the given space freely. If setupUi() is not overridden and reimplemented, command will not be added
+        to UI
         """
 
     def execute(self, argList, **kwargs):

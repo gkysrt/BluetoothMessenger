@@ -2,20 +2,25 @@ import json
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "-s", "-e", "-c", "--start", "--end", "--connector", "--help")
-    cmd = "eco-charge"
+    __options = ("-h", "-s", "-e", "-c", "--start", "--end", "--connector", "--help")
+    __cmd = "eco-charge"
+    __name = "Eco Charge"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -32,7 +37,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.__cmd, "result": "failed"}
 
         onOffArgument = argList.pop(0)
         startTime = 0
@@ -63,7 +68,7 @@ class Command(BaseCommand.BaseCommand):
                 ecoChargeRequest = {"chargePoints": [{"connectorId": connectorID, "programs": [
                     {"key": "Charger.EVC.Program.EcoCharge", "value": "false"}]}]}
                 socket.send(json.dumps(ecoChargeRequest).encode())
-                return {"command": self.cmd, "result": "successful"}
+                return {"command": self.command(), "result": "successful"}
 
             elif onOffArgument == "on":
                 ecoChargeRequest = {
@@ -88,11 +93,11 @@ class Command(BaseCommand.BaseCommand):
                 print("Eco charge is successfully requested {} with start time: {} end time: {}".format(onOffArgument,
                                                                                                         str(startTime),
                                                                                                         str(endTime)))
-                return {"command": self.cmd, "result": "successful"}
+                return {"command": self.command(), "result": "successful"}
 
             else:
                 raise Exception("Second argument should be on/off")
 
         except Exception as e:
             print("Failed to send eco-charge request: %s" % str(e))
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}

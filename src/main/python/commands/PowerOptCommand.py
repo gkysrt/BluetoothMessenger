@@ -1,22 +1,26 @@
 import json
-
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "--help")
-    cmd = "power-optimizer"
+    __options = ("-h", "--help")
+    __cmd = "power-optimizer"
+    __name = "Power Optimizer"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -28,7 +32,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         connectorID = 1
         for i in range(len(argList)):
@@ -46,7 +50,7 @@ class Command(BaseCommand.BaseCommand):
             value = "false"
         else:
             print('Second argument must be "on" or "off"')
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         powerOptimizerRequest = {
             "chargePoints": [{
@@ -61,8 +65,8 @@ class Command(BaseCommand.BaseCommand):
         try:
             socket.send(json.dumps(powerOptimizerRequest).encode())
             print("Power optimizer is requested: connectorID {}".format(str(connectorID)))
-            return {"command": self.cmd, "result": "successful"}
+            return {"command": self.command(), "result": "successful"}
 
         except Exception as e:
             print("Failed to request power optimizer: ", optimizerEnabled + " - ", str(e))
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}

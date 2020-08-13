@@ -40,8 +40,8 @@ class ApplicationCore(ApplicationContext):
 	def iconPath(self):
 		return self.get_resource('icons')
 
-	def commandsPath(self):
-		return self.get_resource(os.path.join('plugins', 'commands')) if is_frozen() else os.path.join(os.path.dirname(__file__), 'commands')
+	def isFrozen(self):
+		return is_frozen()
 
 	@staticmethod
 	def getInstance():

@@ -1,22 +1,26 @@
 import json
-
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
-    cmd = "delay-charge"
+    __options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
+    __cmd = "delay-charge"
+    __name = "Delay Charge"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -34,7 +38,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         delayEnabled = argList.pop(0)
 
@@ -101,11 +105,11 @@ class Command(BaseCommand.BaseCommand):
             try:
                 socket.send(json.dumps(delayChargeRequest).encode())
                 print("Delay charge is successfully requested {}: {} minutes".format(delayEnabled, str(delayTime)))
-                return {"command": self.cmd, "result": "successful"}
+                return {"command": self.command(), "result": "successful"}
 
             except Exception as e:
                 print("Failed to send delay charge request: ", str(e))
-                return {"command": self.cmd, "result": "failed"}
+                return {"command": self.command(), "result": "failed"}
         else:
             print('Second argument of delay-charge command is "on" or "off"')
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}

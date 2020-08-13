@@ -1,22 +1,22 @@
 import json
-
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "-c", "--connector", "--help")
-    cmd = "pause-charge"
+    __options = ("-h", "-c", "--connector", "--help")
+    __cmd = "pause-charge"
+    __name = "Pause"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
 
     @staticmethod
     def info():
@@ -31,7 +31,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         socket = kwargs.get('socket')
         print("Requesting pause charge")
@@ -51,6 +51,6 @@ class Command(BaseCommand.BaseCommand):
 
         except Exception as e:
             print("Failed to send pause-charge request", str(e))
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
-        return {"command": self.cmd, "result": "successful"}
+        return {"command": self.command(), "result": "successful"}

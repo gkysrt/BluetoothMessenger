@@ -4,20 +4,24 @@ import json
 import BaseCommand
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "-p", "--port", "--help")
-    cmd = "connect"
-
+    __options = ("-h", "-p", "--port", "--help")
+    __cmd = "connect"
+    __name = "Connect"
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -32,7 +36,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         socket = kwargs.get('socket')
         print("Establishing connection..")
@@ -49,7 +53,7 @@ class Command(BaseCommand.BaseCommand):
 
         except Exception as e:
             print("Failed connecting specified address %s - port %s - %s" % (macAddress, portNr, str(e)))
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         # Send time sync
         timeSyncRequest = {"MessageType": "TimeSync", "Timezone": "Europe/Istanbul",
@@ -60,4 +64,4 @@ class Command(BaseCommand.BaseCommand):
         time.sleep(0.5)
         socket.send(json.dumps(configParamRequest).encode())
 
-        return {"command": self.cmd, "result": "successful"}
+        return {"command": self.command(), "result": "successful"}

@@ -1,7 +1,7 @@
 import ApplicationCore
 from widgets import MainWindow
 from PySide2 import QtGui
-import sys
+import sys, os
 
 
 if __name__ == '__main__':

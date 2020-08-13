@@ -2,20 +2,25 @@ import BaseCommand
 import json
 
 
-class Command(BaseCommand.BaseCommand):
+class Plugin(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    options = ("-h", "-c", "--connector", "--help")
-    cmd = "interface-setting"
+    __options = ("-h", "-c", "--connector", "--help")
+    __cmd = "interface-setting"
+    __name = "Interface Setting"
 
     @classmethod
     def options(cls):
-        return cls.options
+        return cls.__options
 
     @classmethod
     def command(cls):
-        return cls.cmd
+        return cls.__cmd
+
+    @classmethod
+    def name(cls):
+        return cls.__name
 
     @staticmethod
     def info():
@@ -34,7 +39,7 @@ class Command(BaseCommand.BaseCommand):
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:
             print(self.info())
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         socket = kwargs.get('socket')
 
@@ -116,7 +121,7 @@ class Command(BaseCommand.BaseCommand):
 
         except Exception as e:
             print("Failed to send setting change request: ", str(e))
-            return {"command": self.cmd, "result": "failed"}
+            return {"command": self.command(), "result": "failed"}
 
         print("Settings change is requested")
-        return {"command": self.cmd, "result": "successful"}
+        return {"command": self.command(), "result": "successful"}
