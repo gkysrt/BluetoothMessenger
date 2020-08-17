@@ -43,9 +43,13 @@ class ApplicationCore(ApplicationContext):
 	def isFrozen(self):
 		return is_frozen()
 
+	def getApplicationPalette(self):
+		return
+
 	@staticmethod
 	def getInstance():
 		if ApplicationCore.__instance is None:
 			ApplicationCore()
 
 		return ApplicationCore.__instance
+

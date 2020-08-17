@@ -3,6 +3,7 @@
 QWidget
 {
     font-family: "Muli Light";
+    border: 0px;
 }
 
 QLabel
@@ -15,7 +16,7 @@ QListView
 {
     background-color: #696969;
 }
-
+/*
 QDialog[preferences = "true"] QDialogButtonBox QPushButton{
     background-color:rgb(100, 100, 100);
     margin-bottom: 5px;
@@ -27,13 +28,20 @@ QDialog[preferences = "true"] QDialogButtonBox QPushButton{
     qproperty-icon: none;
     outline:none;
 }
+*/
+
+QToolTip
+{
+    background-color:rgb(192, 192, 192);
+    color: rgb(64, 64, 64);
+}
 
 QPushButton{
     background-color:rgb(191, 191, 191);
     height:26px;
     color:rgb(64, 64, 64);
     border-radius: 13px;
-    qproperty-icon: none;
+   /* qproperty-icon: none;*/
     outline:none;
 }
 
@@ -45,5 +53,105 @@ QPushButton:pressed{
     background-color: rgb(150, 150, 150);
 }
 
+QPushButton[listHeader = "true"] {
+    background-color:rgb(191, 191, 191);
+    color:rgb(64, 64, 64);
+    border-radius: 20px;
+    outline:none;
+}
+
+QPushButton[listHeader = "true"]:hover{
+    background-color: rgb(229, 229, 229);
+}
+
+QPushButton[listHeader = "true"]:pressed{
+    background-color: rgb(150, 150, 150);
+}
+
+QTabWidget
+{
+    min-width: 25px;
+    min-height: 25px;
+    background-color: rgb(64, 64, 64);
+    border: 1px solid rgb(64, 64, 64);
+    border-radius: 4px;
+    font-size:14px;
+    /**qproperty-icon: none;*/
+}
+
+QTabWidget QWidget
+{
+    background-color: rgb(229, 229, 229);
+}
+
+QTabWidget::pane {
+    border-style: none;
+	border-width: 0px;
+	border: 0px;
+    border-top: 0px solid rgb(50, 50, 50);
+
+}
+
+QTabWidget QTabBar {
+    background-color: rgb(166, 166, 166);
+    border: 0px solid rgb(50, 50, 50);
+    outline:none;
+
+}
+
+QTabWidget QTabBar::tab {
+	width: 150px;
+    height: 25px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    color: rgb(64, 64, 64);
+    background-color: rgb(192, 192, 192);
+    border-top: 1px solid rgb(192, 192, 192);
+    border-bottom: 1px solid rgb(192, 192, 192);
+	text-align:left;
+	font-size: 14px;
+	outline:none;
+}
+
+QTabWidget QTabBar::tab:selected {
+	color: rgb(40, 144, 229);
+	background-color:rgb(229, 229, 229);
+	border: 0px;
+	border-top: 2px solid rgb(40, 144, 229);
+    font: bold;
+    width: 150px;
+    height: 25px;
+}
+
+QTabWidget QTabBar::tab:hover:!selected {
+	color: rgb(64, 64, 64);
+	background-color:rgb(210, 210, 210);
+	border-top: 1px solid rgb(128, 128, 128);
+	width: 150px;
+    height: 25px;
+}
+
+QTabWidget QToolTip
+{
+    background-color:rgb(64,64,64);
+    color:white;
+}
+
+/*
+QTabWidget QPushButton[cornerbutton= "true"]:hover:!pressed
+{
+    min-width: 28px;
+    min-height: 28px;
+	background-color: rgb(80, 75, 75);
+
+}
+QTabWidget QPushButton[cornerbutton= "true"]:pressed
+{
+    min-width: 28px;
+    min-height: 28px;
+	background-color:rgb(90, 85, 85);
+    color:rgb(250, 175, 0);
+}
+*/
 
 

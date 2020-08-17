@@ -60,3 +60,6 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Start charge is successfully requested: connectorID {}".format(str(connectorID)))
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self):
+        return

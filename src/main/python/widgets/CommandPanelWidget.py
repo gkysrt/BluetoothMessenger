@@ -2,9 +2,9 @@ from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets
 from utility.PluginReader import PluginReader
 from BaseCommand import BaseCommand
-from commands import AuthorizeCommand, ConnectCommand, CurrLimCommand, DelayCommand, DisconnectCommand, EcoCommand, \
-    FreeChargeCommand, InterfaceSettCommand, MaxCurrCommand, PauseCommand, PowerOptCommand, ReconfigureCommand, \
-    ResetRfidCommand, ResumeCommand, ScanCommand, ServiceCommand, StartCommand, StopCommand
+from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, \
+    FreeChargeCommand, InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, \
+    ResetRfidCommand, ServiceCommand
 
 
 class CommandPanelWidget(QtWidgets.QLabel):
@@ -38,6 +38,7 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         self.__tabWidget = QtWidgets.QTabWidget(self)
         self.__tabWidget.setMovable(False)
+        self.__tabWidget.tabBar().setUsesScrollButtons(False)
 
         # Setup tabs
         for key in self.__cmdDict.keys():

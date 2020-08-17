@@ -5,11 +5,13 @@ from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
 from models import ModelFilter
 from utility import QssLoader
 from utility.PluginReader import PluginReader
+from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand
 
 
 class MainWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent = None):
 		super().__init__(parent)
+		self.__scanButton = None
 		self.__authorizeButton = None
 		self.__startChargeButton = None
 		self.__stopChargeButton = None
@@ -18,6 +20,11 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__model = None
 		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
 		self.setupUi()
+		self.__authorizeCmd = None
+		self.__pauseCmd = None
+		self.__resumeCmd = None
+		self.__startCmd = None
+		self.__stopCmd = None
 		self.initialize()
 		self.initSignalsAndSlots()
 
@@ -94,6 +101,11 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
 
 	def initialize(self):
+		self.__startCmd = StartCommand.Plugin()
+		self.__authorizeCmd = AuthorizeCommand.Plugin()
+		self.__pauseCmd = PauseCommand.Plugin()
+		self.__resumeCmd = ResumeCommand.Plugin()
+		self.__stopCmd = StopCommand.Plugin()
 		self.__model = ModelFilter.ModelFilter(self)
 		self.__listView.setModel(self.__model)
 
@@ -103,10 +115,12 @@ class MainWindow(QtWidgets.QMainWindow):
 		super().keyPressEvent(event)
 
 	def onStopButtonClick(self, checked = False):
-		pass
+		self.__stopCmd.execute()
 
 	def onStartButtonClick(self, checked = False):
-		pass
+		self.__startCmd.execute()
+		self.__pauseCmd.execute()
+		self.__resumeCmd.execute()
 
 	def onAuthorizeButtonClick(self, checked = False):
-		pass
+		self.__authorizeCmd.execute()

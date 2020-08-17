@@ -1,18 +1,44 @@
-from PySide2 import QtWidgets
+from ApplicationCore import ApplicationCore
+from PySide2 import QtWidgets, QtGui, QtCore
 
 
 class ListHeaderWidget(QtWidgets.QLabel):
 	def __init__(self, parent=None):
 		super().__init__(parent)
+		self.__scanButton = None
+		self.__disconnectButton = None
+		self.__commandPromptButton = None
 		self.setupUi()
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
-		self.setStyleSheet("QWidget{border: 1px solid rgb(64, 64, 64);}")
 		self.setFixedHeight(48)
 		layout = QtWidgets.QHBoxLayout(self)
-		layout.setContentsMargins(0, 0, 0, 0)
-		layout.setSpacing(4)
+		layout.setContentsMargins(8, 0, 8, 0)
+		layout.setSpacing(8)
+
+		appCore = ApplicationCore.getInstance()
+
+		self.__scanButton = QtWidgets.QPushButton(self)
+		self.__scanButton.setIcon(QtGui.QPixmap(appCore.getIcon('bluetooth_scan.png')))
+		self.__scanButton.setFixedSize(40, 40)
+		self.__scanButton.setProperty('listHeader', True)
+		self.__scanButton.setIconSize(QtCore.QSize(30, 30))
+		self.__scanButton.setToolTip("Scan devices")
+
+		self.__disconnectButton = QtWidgets.QPushButton(self)
+		self.__disconnectButton.setIcon(QtGui.QIcon(appCore.getIcon('bluetooth_disabled.png')))
+		self.__disconnectButton.setFixedSize(40, 40)
+		self.__disconnectButton.setProperty('listHeader', True)
+		self.__disconnectButton.setIconSize(QtCore.QSize(30, 30))
+		self.__disconnectButton.setToolTip("Disconnect all")
+
+		rightSpacerWidget = QtWidgets.QWidget(self)
+		rightSpacerWidget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+		layout.addWidget(self.__scanButton)
+		layout.addWidget(self.__disconnectButton)
+		layout.addWidget(rightSpacerWidget)
 
 	def initSignalsAndSlots(self):
 		pass

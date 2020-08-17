@@ -18,6 +18,10 @@ class Plugin(BaseCommand.BaseCommand):
     def command(cls):
         return cls.__cmd
 
+    @classmethod
+    def name(cls):
+        return cls.__name
+
     @staticmethod
     def info():
         return """pause-charge [options]: Pause charge command, pauses ongoing charging.

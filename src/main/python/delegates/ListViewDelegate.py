@@ -20,7 +20,7 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 
 		appCore = ApplicationCore.getInstance()
 		self.__iconEVC = QtGui.QPixmap(appCore.getIcon('evc_device.png'))
-		self.__iconUndefined = QtGui.QPixmap(appCore.getIcon('bluetooth.png'))
+		self.__iconUndefined = QtGui.QPixmap(appCore.getIcon('undefined_device.png'))
 		self.__iconPhone = QtGui.QPixmap(appCore.getIcon('phone_device.png'))
 		self.__iconHeadphones = QtGui.QPixmap()
 		self.__iconLaptop = QtGui.QPixmap()
