@@ -49,3 +49,19 @@ class ListModel(QtCore.QAbstractListModel):
 			return QtCore.QModelIndex()
 
 		return self.createIndex(rowNr, 0, data)
+
+	def setDevices(self, deviceList):
+		self.beginResetModel()
+		self.__deviceList = list(deviceList)
+		self.endResetModel()
+
+	def addDevice(self, device):
+		self.beginInsertRows(QtCore.QModelIndex(), len(self.__deviceList), len(self.__deviceList))
+		self.__deviceList.append(device)
+		self.endInsertRows()
+
+	def removeDevice(self, device):
+		index = self.indexFromData(device)
+		self.beginRemoveRows(QtCore.QModelIndex(), index.row(), index.row())
+		self.__deviceList.remove(device)
+		self.endRemoveRows()

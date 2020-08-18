@@ -4,13 +4,15 @@ from delegates import ListViewDelegate
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
 from models import ModelFilter
 from utility import QssLoader
-from utility.PluginReader import PluginReader
-from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand
+from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
+	DisconnectCommand
+import bluetooth
 
 
 class MainWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent = None):
 		super().__init__(parent)
+		self.__socket = None
 		self.__scanButton = None
 		self.__authorizeButton = None
 		self.__startChargeButton = None
@@ -25,6 +27,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__resumeCmd = None
 		self.__startCmd = None
 		self.__stopCmd = None
+		self.__scanCmd = None
+		self.__disconnectCmd = None
 		self.initialize()
 		self.initSignalsAndSlots()
 
@@ -99,8 +103,13 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
+		self.__listHeader.scanSignal.connect(self.onScanSignal)
+		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
 
 	def initialize(self):
+		self.initBluetoothSocket()
+		self.__scanCmd = ScanCommand.Plugin()
+		self.__disconnectCmd = DisconnectCommand.Plugin()
 		self.__startCmd = StartCommand.Plugin()
 		self.__authorizeCmd = AuthorizeCommand.Plugin()
 		self.__pauseCmd = PauseCommand.Plugin()
@@ -108,6 +117,9 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__stopCmd = StopCommand.Plugin()
 		self.__model = ModelFilter.ModelFilter(self)
 		self.__listView.setModel(self.__model)
+
+	def initBluetoothSocket(self):
+		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Escape:
@@ -124,3 +136,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def onAuthorizeButtonClick(self, checked = False):
 		self.__authorizeCmd.execute()
+
+	def onScanSignal(self):
+		returnDict = self.__scanCmd.executeUI()
+		devices = returnDict.get("devices")
+		self.__model.setDevices(devices)
+
+	def onDisconnectSignal(self):
+		print("disconnect")

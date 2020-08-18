@@ -66,5 +66,21 @@ class BaseCommand(QtWidgets.QWidget):
         argList is a list of strings, and it is in order which user typed in .
         String list is parsed string list of user input and sent by CommandParser.
         Default return type is dict.
+        e.g
+            return {"command": self.command(), "result": "successful", "devices": list(nearbyDevices)}
+
         """
         raise Exception("Plugin inherits BaseCommand should implement an execute method")
+
+    def executeUI(self, **kwargs):
+        """
+        :param kwargs:
+        :return:
+        execute() function does what command should do upon execution, <u><b>from UI</b></u>.
+        Default return type is dict.
+        If this method is not overridden an implemented, it will be a blank command on UI
+        e.g
+            return {"command": self.command(), "result": "successful", "devices": list(nearbyDevices)}
+        """
+        pass
+

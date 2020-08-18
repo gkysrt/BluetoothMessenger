@@ -74,3 +74,21 @@ class Plugin(BaseCommand.BaseCommand):
 		print("Found {} devices.".format(len(nearbyDevices)))
 
 		return {"command": self.command(), "result": "successful"}
+
+	def executeUI(self, **kwargs):
+		namesEnabled = True
+		flushCache = True
+		lookupClass = True
+		duration = 8
+
+		print("Starting bluetooth scan..")
+
+		try:
+			nearbyDevices = bluetooth.discover_devices(lookup_names=namesEnabled, flush_cache=flushCache,
+													   lookup_class=lookupClass, duration=duration)
+		except Exception as e:
+			print("Failed to bluetooth scan nearby devices", str(e))
+			return {"command": self.command(), "result": "failed"}
+
+		print("Found {} devices.".format(len(nearbyDevices)))
+		return {"command": self.command(), "result": "successful", "devices": list(nearbyDevices)}
