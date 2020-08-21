@@ -76,7 +76,7 @@ QTabWidget
     border: 1px solid rgb(64, 64, 64);
     border-radius: 4px;
     font-size:14px;
-    /**qproperty-icon: none;*/
+    /*qproperty-icon: none;*/
 }
 
 QTabWidget QWidget
@@ -114,11 +114,12 @@ QTabWidget QTabBar::tab {
 }
 
 QTabWidget QTabBar::tab:selected {
+    margin-top:1px;
+
 	color: rgb(40, 144, 229);
 	background-color:rgb(229, 229, 229);
 	border: 0px;
-	border-top: 2px solid rgb(40, 144, 229);
-    font: bold;
+	border-top: 1px solid rgb(40, 144, 229);
     width: 150px;
     height: 25px;
 }

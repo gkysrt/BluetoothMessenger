@@ -3,8 +3,8 @@ from models.Enum import DeviceTypes
 
 
 class LaptopDevice(BaseDevice.BaseDevice):
-	def __init__(self, name = "", mac = "", isConnected = False):
-		super().__init__(name, mac, isConnected)
+	def __init__(self, name = "", mac = "", deviceClass = 0, isConnected = False):
+		super().__init__(name, mac, deviceClass, isConnected)
 
 	@staticmethod
 	def deviceType():

@@ -3,8 +3,8 @@ from models import ListModel
 
 
 class ModelFilter(ListModel.ListModel):
-	def __init__(self, parent = None):
-		super().__init__(parent)
+	def __init__(self, adapter = None, parent = None):
+		super().__init__(adapter=adapter, parent=parent)
 
 	# def rowCount(self, index):
 	# 	return 0

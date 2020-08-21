@@ -2,7 +2,7 @@ from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
-from models import ModelFilter
+from models import ModelFilter, ModelAdapter
 from utility import QssLoader
 from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
 	DisconnectCommand
@@ -20,8 +20,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listView = None
 		self.__listHeader = None
 		self.__model = None
-		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
-		self.setupUi()
+		self.__modelAdapter = None
 		self.__authorizeCmd = None
 		self.__pauseCmd = None
 		self.__resumeCmd = None
@@ -29,6 +28,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__stopCmd = None
 		self.__scanCmd = None
 		self.__disconnectCmd = None
+		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
+		self.setupUi()
 		self.initialize()
 		self.initSignalsAndSlots()
 
@@ -115,7 +116,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__pauseCmd = PauseCommand.Plugin()
 		self.__resumeCmd = ResumeCommand.Plugin()
 		self.__stopCmd = StopCommand.Plugin()
-		self.__model = ModelFilter.ModelFilter(self)
+		self.__modelAdapter = ModelAdapter.ModelAdapter()
+		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
 		self.__listView.setModel(self.__model)
 
 	def initBluetoothSocket(self):

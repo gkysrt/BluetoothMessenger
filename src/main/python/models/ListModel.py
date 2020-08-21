@@ -3,9 +3,10 @@ from models.devices import BaseDevice, EVCDevice, HeadphoneDevice, LaptopDevice,
 
 
 class ListModel(QtCore.QAbstractListModel):
-	def __init__(self, parent = None):
+	def __init__(self,  adapter = None, parent = None):
 		super().__init__(parent)
 		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:SD:4R:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "XZ:4G:F3:F1:LF:55", False), PhoneDevice.PhoneDevice("iPhone", "KL:LF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
+		self.__adapter = adapter
 
 	def rowCount(self, index):
 		# No regard to parent index
@@ -50,18 +51,28 @@ class ListModel(QtCore.QAbstractListModel):
 
 		return self.createIndex(rowNr, 0, data)
 
+	# Set self.__deviceList anew and reset model
 	def setDevices(self, deviceList):
 		self.beginResetModel()
-		self.__deviceList = list(deviceList)
+		devices = deviceList
+		if self.__adapter:
+			devices = self.__adapter.request(deviceList)
+		self.__deviceList = devices
 		self.endResetModel()
 
-	def addDevice(self, device):
-		self.beginInsertRows(QtCore.QModelIndex(), len(self.__deviceList), len(self.__deviceList))
-		self.__deviceList.append(device)
+	# Add one or more devices to model
+	def addDevice(self, deviceList):
+		self.beginInsertRows(QtCore.QModelIndex(), len(self.__deviceList), len(self.__deviceList) + len(devices) - 1)
+		devices = deviceList
+		if self.__adapter:
+			devices = self.__adapter.request(deviceList)
+		self.__deviceList = self.__deviceList + devices
 		self.endInsertRows()
 
-	def removeDevice(self, device):
-		index = self.indexFromData(device)
+	# Remove one or more devices from model
+	# TODO: INCOMPLETE
+	def removeDevice(self, deviceList):
+		index = self.indexFromData(deviceList)
 		self.beginRemoveRows(QtCore.QModelIndex(), index.row(), index.row())
-		self.__deviceList.remove(device)
+		self.__deviceList.remove(deviceList)
 		self.endRemoveRows()
