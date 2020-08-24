@@ -171,10 +171,12 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onCommandThreadSuccess(self, returnValue):
 		if returnValue.get('command') == 'scan':
 			devices = returnValue.get('devices')
-			mac, name, _ = devices[0]
-			print(mac, name)
-			# self.__commandThread.start(self.__serviceCmd.executeUI, )
-			services = bluetooth.find_service(address=mac, name=name)
+			newDevices = []
+			for device in devices:
+				mac, name, uuid = device
+				services = bluetooth.find_service(address=mac)
+				newDevices.append((mac, name, uuid, services))
+
 			print(services)
 			self.__model.setDevices(devices)
 			self.__listHeader.setScanButtonEnabled(True)
