@@ -61,5 +61,21 @@ class Plugin(BaseCommand.BaseCommand):
         print("Start charge is successfully requested: connectorID {}".format(str(connectorID)))
         return {"command": self.command(), "result": "successful"}
 
-    def executeUI(self):
-        return
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+
+        print("Requesting start charge")
+
+        connectorID = 1
+        startRequest = {
+            "chargePoints": [{"connectorId": connectorID, "command": [{"key": "Charger.EVC.Command.Start"}]}]}
+
+        try:
+            socket.send(json.dumps(startRequest).encode())
+
+        except Exception as e:
+            print("Failed to send start-charge request", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        print("Start charge is successfully requested: connectorID {}".format(str(connectorID)))
+        return {"command": self.command(), "result": "successful"}

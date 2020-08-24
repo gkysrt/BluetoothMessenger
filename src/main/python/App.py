@@ -1,6 +1,6 @@
 import ApplicationCore
 from widgets import MainWindow
-from PySide2 import QtGui
+from PySide2 import QtGui, QtQuick
 import sys, os
 
 

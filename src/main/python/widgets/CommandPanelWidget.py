@@ -2,9 +2,6 @@ from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets
 from utility.PluginReader import PluginReader
 from BaseCommand import BaseCommand
-from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, \
-    FreeChargeCommand, InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, \
-    ResetRfidCommand, ServiceCommand
 
 
 class CommandPanelWidget(QtWidgets.QLabel):

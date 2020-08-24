@@ -48,3 +48,19 @@ class Plugin(BaseCommand.BaseCommand):
         socket.close()
         print("Disconnected from peer")
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Disconnecting..")
+
+        try:
+            socket.close()
+
+        except Exception as e:
+            print("Failed disconnecting: ", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        # TODO: Should a disconnect request be sent to the machine?
+        socket.close()
+        print("Disconnected from peer")
+        return {"command": self.command(), "result": "successful"}

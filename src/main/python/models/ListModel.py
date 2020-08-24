@@ -76,3 +76,11 @@ class ListModel(QtCore.QAbstractListModel):
 		self.beginRemoveRows(QtCore.QModelIndex(), index.row(), index.row())
 		self.__deviceList.remove(deviceList)
 		self.endRemoveRows()
+
+	def connectedDevice(self):
+		connectedDevice = None
+		for device in self.__deviceList:
+			if device.isConnected():
+				connectedDevice = device
+
+		return connectedDevice

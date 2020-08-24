@@ -58,3 +58,21 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Requesting pause charge")
+
+        connectorID = 1
+        pauseRequest = {
+            "chargePoints": [{"connectorId": connectorID, "command": [{"key": "Charger.EVC.Command.Pause"}]}]}
+
+        try:
+            socket.send(json.dumps(pauseRequest).encode())
+            print("Pause charge is successfully requested: connectorID {}".format(str(connectorID)))
+
+        except Exception as e:
+            print("Failed to send pause-charge request", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        return {"command": self.command(), "result": "successful"}

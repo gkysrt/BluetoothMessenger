@@ -57,3 +57,19 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Authorization is successfully requested: connectorID {}".format(str(connectorID)))
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Requesting authorize charge")
+        connectorID = 1
+        startRequest = {
+            "chargePoints": [{"connectorId": connectorID, "command": [{"key": "Charger.EVC.Command.Authorize"}]}]}
+        try:
+            socket.send(json.dumps(startRequest).encode())
+
+        except Exception as e:
+            print("Failed to send authorization request", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        print("Authorization is successfully requested: connectorID {}".format(str(connectorID)))
+        return {"command": self.command(), "result": "successful"}

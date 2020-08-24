@@ -46,3 +46,9 @@ class ListHeaderWidget(QtWidgets.QLabel):
 	def initSignalsAndSlots(self):
 		self.__scanButton.clicked.connect(self.scanSignal.emit)
 		self.__disconnectButton.clicked.connect(self.disconnectSignal.emit)
+
+	def setScanButtonEnabled(self, enabled):
+		self.__scanButton.setEnabled(bool(enabled))
+
+	def setDisconnectButtonEnabled(self, enabled):
+		self.__disconnectButton.setEnabled(bool(enabled))

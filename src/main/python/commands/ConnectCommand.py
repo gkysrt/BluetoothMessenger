@@ -65,3 +65,29 @@ class Plugin(BaseCommand.BaseCommand):
         socket.send(json.dumps(configParamRequest).encode())
 
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Establishing connection..")
+
+        macAddress = kwargs.get('mac')
+        portNr = kwargs.get('port', 1)
+
+        try:
+            socket.connect((macAddress, int(portNr)))
+            print("Connection is established with {} over port number {}".format(str(macAddress), str(portNr)))
+
+        except Exception as e:
+            print("Failed connecting specified address %s - port %s - %s" % (macAddress, portNr, str(e)))
+            return {"command": self.command(), "result": "failed"}
+
+        # Send time sync
+        timeSyncRequest = {"MessageType": "TimeSync", "Timezone": "Europe/Istanbul",
+                           "LocalTime": datetime.datetime.now().strftime("%d-%m-%y %H:%M:%S")}
+        configParamRequest = {"MessageType": "ConfigurationParameterRequest"}
+
+        socket.send(json.dumps(timeSyncRequest).encode())
+        time.sleep(0.5)
+        socket.send(json.dumps(configParamRequest).encode())
+
+        return {"command": self.command(), "result": "successful"}

@@ -75,3 +75,29 @@ class Plugin(BaseCommand.BaseCommand):
 		print("Service scan is completed")
 		for service in serviceList:
 			print(service)
+
+		return {"command": self.command(), "result": "successful", "services": list(serviceList)}
+
+	def executeUI(self, **kwargs):
+
+		name = kwargs.get('name', None)
+		mac = kwargs.get('mac', None)
+		uuid = kwargs.get('uuid', None)
+		print("Looking for target services..")
+
+		if name is None and mac is None and uuid is None:
+			print("You must at least specify one option for the target")
+			return {"command": self.command(), "result": "failed"}
+
+		try:
+			serviceList = bluetooth.find_service(address=mac, uuid=uuid, name=name)
+
+		except Exception as e:
+			print("Error finding services %s" % str(e))
+			return {"command": self.command(), "result": "failed"}
+
+		print("Service scan is completed")
+		for service in serviceList:
+			print(service)
+
+		return {"command": self.command(), "result": "successful", "services": list(serviceList)}

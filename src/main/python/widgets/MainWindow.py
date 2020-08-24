@@ -2,32 +2,40 @@ from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
-from models import ModelFilter, ModelAdapter
+from models import ModelFilter, ModelAdapter, Thread
 from utility import QssLoader
 from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
-	DisconnectCommand
+	DisconnectCommand, ConnectCommand, ServiceCommand
 import bluetooth
 
 
 class MainWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent = None):
 		super().__init__(parent)
-		self.__socket = None
 		self.__scanButton = None
 		self.__authorizeButton = None
 		self.__startChargeButton = None
 		self.__stopChargeButton = None
+
 		self.__listView = None
 		self.__listHeader = None
+
+		self.__socket = None
 		self.__model = None
 		self.__modelAdapter = None
+
+		self.__commandThread = None
+
 		self.__authorizeCmd = None
 		self.__pauseCmd = None
 		self.__resumeCmd = None
 		self.__startCmd = None
 		self.__stopCmd = None
 		self.__scanCmd = None
+		self.__serviceCmd = None
+		self.__connectCmd = None
 		self.__disconnectCmd = None
+
 		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
 		self.setupUi()
 		self.initialize()
@@ -101,21 +109,28 @@ class MainWindow(QtWidgets.QMainWindow):
 		centralLayout.addWidget(deviceWindow)
 
 	def initSignalsAndSlots(self):
+		self.__commandThread.successful.connect(self.onCommandThreadSuccess)
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
 		self.__listHeader.scanSignal.connect(self.onScanSignal)
 		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
+		self.__listView.clicked.connect(self.onListItemClick)
 
 	def initialize(self):
 		self.initBluetoothSocket()
+		self.__commandThread = Thread.Thread(self)
+
 		self.__scanCmd = ScanCommand.Plugin()
+		self.__serviceCmd = ServiceCommand.Plugin()
+		self.__connectCmd = ConnectCommand.Plugin()
 		self.__disconnectCmd = DisconnectCommand.Plugin()
 		self.__startCmd = StartCommand.Plugin()
 		self.__authorizeCmd = AuthorizeCommand.Plugin()
 		self.__pauseCmd = PauseCommand.Plugin()
 		self.__resumeCmd = ResumeCommand.Plugin()
 		self.__stopCmd = StopCommand.Plugin()
+
 		self.__modelAdapter = ModelAdapter.ModelAdapter()
 		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
 		self.__listView.setModel(self.__model)
@@ -123,26 +138,51 @@ class MainWindow(QtWidgets.QMainWindow):
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 
+	# ------------- EVENT HANDLING -------------
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Escape:
 			self.close()
 		super().keyPressEvent(event)
 
+	# ------------- SLOTS -------------
 	def onStopButtonClick(self, checked = False):
-		self.__stopCmd.execute()
+		if not self.__commandThread.isRunning():
+			self.__commandThread.start(self.__stopCmd.executeUI, socket=self.__socket)
 
 	def onStartButtonClick(self, checked = False):
-		self.__startCmd.execute()
-		self.__pauseCmd.execute()
-		self.__resumeCmd.execute()
+		if not self.__commandThread.isRunning():
+			self.__commandThread.start(self.__startCmd.executeUI, socket = self.__socket)
+			self.__commandThread.start(self.__pauseCmd.executeUI, socket=self.__socket)
+			self.__commandThread.start(self.__resumeCmd.executeUI, socket=self.__socket)
 
 	def onAuthorizeButtonClick(self, checked = False):
-		self.__authorizeCmd.execute()
+		if not self.__commandThread.isRunning():
+			self.__commandThread.start(self.__authorizeCmd.executeUI, socket = self.__socket)
 
 	def onScanSignal(self):
-		returnDict = self.__scanCmd.executeUI()
-		devices = returnDict.get("devices")
-		self.__model.setDevices(devices)
+		if not self.__commandThread.isRunning():
+			self.__listHeader.setScanButtonEnabled(False)
+			self.__commandThread.start(self.__scanCmd.executeUI)
 
 	def onDisconnectSignal(self):
-		print("disconnect")
+		if self.__model.connectedDevice() is not None and not self.__commandThread.isRunning():
+			self.__commandThread.start(self.__disconnectCmd.executeUI, socket = self.__socket)
+
+	def onCommandThreadSuccess(self, returnValue):
+		if returnValue.get('command') == 'scan':
+			devices = returnValue.get('devices')
+			mac, name, _ = devices[0]
+			print(mac, name)
+			# self.__commandThread.start(self.__serviceCmd.executeUI, )
+			services = bluetooth.find_service(address=mac, name=name)
+			print(services)
+			self.__model.setDevices(devices)
+			self.__listHeader.setScanButtonEnabled(True)
+
+	def onCommandThreadFail(self, exception):
+		print("Command thread failed to execute command - Error: {}".format(str(exception)))
+
+	def onListItemClick(self, index):
+		if not self.__commandThread.isRunning():
+			device = self.__model.dataFromIndex(index)
+			self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)

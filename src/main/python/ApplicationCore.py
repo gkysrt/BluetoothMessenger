@@ -23,6 +23,9 @@ class ApplicationCore(ApplicationContext):
 	def getQss(self, qss = ''):
 		return self.get_resource(os.path.join('qss'), qss)
 
+	def getQml(self, qml = ''):
+		return self.get_resource(os.path.join('qml'), qml)
+
 	def getPlugin(self, plugin = ''):
 		return self.get_resource(os.path.join('plugins'), plugin)
 
@@ -36,6 +39,9 @@ class ApplicationCore(ApplicationContext):
 
 	def qssPath(self):
 		return self.get_resource('qss')
+
+	def qmlPath(self):
+		return self.get_resource('qml')
 
 	def iconPath(self):
 		return self.get_resource('icons')
