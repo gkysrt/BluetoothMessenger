@@ -11,6 +11,6 @@ class ModelAdapter(object):
 		outputList = []
 		for _input in inputList:
 			mac, name, deviceClass, services = _input
-			outputList.append(BaseDevice.BaseDevice(name, mac, deviceClass, False))
+			outputList.append(BaseDevice.BaseDevice(name, mac, deviceClass, False, services))
 
 		return outputList

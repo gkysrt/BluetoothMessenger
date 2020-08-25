@@ -5,10 +5,11 @@ class ListView(QtWidgets.QListView):
 	def __init__(self, parent = None):
 		super().__init__(parent)
 		self.initSignalsAndSlots()
+		self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 		self.setMouseTracking(True)
 
 	def initSignalsAndSlots(self):
-		pass
+		self.customContextMenuRequested.connect(self.onContextMenuRequest)
 
 	def mouseMoveEvent(self, event):
 		if self.indexAt(event.pos()).isValid():
@@ -16,3 +17,10 @@ class ListView(QtWidgets.QListView):
 		else:
 			self.setCursor(QtCore.Qt.ArrowCursor)
 		super().mouseMoveEvent(event)
+
+	def onContextMenuRequest(self, pos):
+		clickIndex = self.indexAt(pos)
+		if clickIndex.isValid():
+			device = self.model().dataFromIndex(clickIndex)
+			print(device)
+			print(device.services())

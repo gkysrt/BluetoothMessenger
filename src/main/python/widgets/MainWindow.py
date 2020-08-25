@@ -179,7 +179,7 @@ class MainWindow(QtWidgets.QMainWindow):
 				services = bluetooth.find_service(address=mac)
 				newDevices.append((mac, name, uuid, services))
 
-			self.__model.setDevices(devices)
+			self.__model.setDevices(newDevices)
 			self.__listHeader.setScanButtonEnabled(True)
 
 	def onCommandThreadFail(self, exception):
