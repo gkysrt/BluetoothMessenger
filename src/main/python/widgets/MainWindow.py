@@ -12,7 +12,6 @@ import bluetooth
 class MainWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent = None):
 		super().__init__(parent)
-		self.__scanButton = None
 		self.__authorizeButton = None
 		self.__startChargeButton = None
 		self.__stopChargeButton = None
@@ -88,12 +87,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		self.__authorizeButton = QtWidgets.QPushButton(buttonContainerWidget)
 		self.__authorizeButton.setText("Authorize")
+		self.__authorizeButton.setCursor(QtCore.Qt.PointingHandCursor)
 
 		self.__startChargeButton = QtWidgets.QPushButton(buttonContainerWidget)
 		self.__startChargeButton.setText("Start")
+		self.__startChargeButton.setCursor(QtCore.Qt.PointingHandCursor)
 
 		self.__stopChargeButton = QtWidgets.QPushButton(buttonContainerWidget)
 		self.__stopChargeButton.setText("Stop")
+		self.__stopChargeButton.setCursor(QtCore.Qt.PointingHandCursor)
 
 		buttonContainerLayout.addWidget(self.__authorizeButton)
 		buttonContainerLayout.addWidget(self.__startChargeButton)
@@ -177,7 +179,6 @@ class MainWindow(QtWidgets.QMainWindow):
 				services = bluetooth.find_service(address=mac)
 				newDevices.append((mac, name, uuid, services))
 
-			print(services)
 			self.__model.setDevices(devices)
 			self.__listHeader.setScanButtonEnabled(True)
 

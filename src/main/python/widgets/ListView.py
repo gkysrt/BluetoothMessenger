@@ -6,7 +6,13 @@ class ListView(QtWidgets.QListView):
 		super().__init__(parent)
 		self.initSignalsAndSlots()
 		self.setMouseTracking(True)
-		# self.setCursor(QtCore.Qt.PointingHandCursor)
 
 	def initSignalsAndSlots(self):
 		pass
+
+	def mouseMoveEvent(self, event):
+		if self.indexAt(event.pos()).isValid():
+			self.setCursor(QtCore.Qt.PointingHandCursor)
+		else:
+			self.setCursor(QtCore.Qt.ArrowCursor)
+		super().mouseMoveEvent(event)

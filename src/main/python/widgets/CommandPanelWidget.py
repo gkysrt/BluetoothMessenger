@@ -2,6 +2,8 @@ from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets
 from utility.PluginReader import PluginReader
 from BaseCommand import BaseCommand
+from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, FreeChargeCommand, InterfaceSettCommand, \
+    InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, ResetRfidCommand
 
 
 class CommandPanelWidget(QtWidgets.QLabel):
@@ -15,6 +17,7 @@ class CommandPanelWidget(QtWidgets.QLabel):
         self.setupUi()
         self.initSignalsAndSlots()
 
+    # This method aims to initialize both external and internal commands
     def initializeCommands(self):
         appCore = ApplicationCore.getInstance()
         externalCommandPluginsDict = {}
@@ -23,7 +26,9 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         internalCommandPluginsDict = {}
         for subclass in BaseCommand.__subclasses__():
-            internalCommandPluginsDict[subclass.name()] = subclass()
+            # Check if internal command plugin is inside commands.plugin package
+            if subclass.__module__.startswith('commands.plugin'):
+                internalCommandPluginsDict[subclass.name()] = subclass()
 
         internalCommandPluginsDict.update(externalCommandPluginsDict)
         self.__cmdDict = internalCommandPluginsDict

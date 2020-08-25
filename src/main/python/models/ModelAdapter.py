@@ -10,7 +10,7 @@ class ModelAdapter(object):
 	def request(cls, inputList):
 		outputList = []
 		for _input in inputList:
-			mac, name, deviceClass = _input
+			mac, name, deviceClass, services = _input
 			outputList.append(BaseDevice.BaseDevice(name, mac, deviceClass, False))
 
 		return outputList
