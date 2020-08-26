@@ -14,7 +14,9 @@ class Thread(QtCore.QThread):
 		self.__resultQueueLimit = 10
 
 	def run(self):
-		while self.__looping:
+		firstIteration = True
+		while self.__looping or firstIteration:
+			firstIteration = False
 			try:
 				if self.__args:
 					returnValue = self.__func(**self.__args)

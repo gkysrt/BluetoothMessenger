@@ -24,6 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__modelAdapter = None
 
 		self.__commandThread = None
+		self.__serviceLoaderThread = None
 
 		self.__authorizeCmd = None
 		self.__pauseCmd = None
@@ -118,10 +119,13 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listHeader.scanSignal.connect(self.onScanSignal)
 		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
 		self.__listView.clicked.connect(self.onListItemClick)
+		self.__model.rowsInserted.connect(self.onDeviceAdded)
+		self.__model.modelReset.connect(self.onDeviceModelReset)
 
 	def initialize(self):
 		self.initBluetoothSocket()
 		self.__commandThread = Thread.Thread(self)
+		self.__serviceLoaderThread = Thread.Thread(self)
 
 		self.__scanCmd = ScanCommand.Plugin()
 		self.__serviceCmd = ServiceCommand.Plugin()
@@ -139,6 +143,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+		self.__socket.setblocking(True)
 
 	# ------------- EVENT HANDLING -------------
 	def keyPressEvent(self, event):
@@ -173,13 +178,7 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onCommandThreadSuccess(self, returnValue):
 		if returnValue.get('command') == 'scan':
 			devices = returnValue.get('devices')
-			newDevices = []
-			for device in devices:
-				mac, name, uuid = device
-				services = bluetooth.find_service(address=mac)
-				newDevices.append((mac, name, uuid, services))
-
-			self.__model.setDevices(newDevices)
+			self.__model.setDevices(devices)
 			self.__listHeader.setScanButtonEnabled(True)
 
 	def onCommandThreadFail(self, exception):
@@ -189,3 +188,20 @@ class MainWindow(QtWidgets.QMainWindow):
 		if not self.__commandThread.isRunning():
 			device = self.__model.dataFromIndex(index)
 			self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)
+
+	def onDeviceAdded(self, parent, first, last):
+		self.__serviceLoaderThread.start(self.loadServices, first=first, last=last)
+
+	def onDeviceModelReset(self):
+		self.__serviceLoaderThread.start(self.loadServices, first=0, last=self.__model.rowCount(QtCore.QModelIndex()))
+
+	def loadServices(self, **kwargs):
+		firstRow = kwargs.get('first')
+		lastRow = kwargs.get('last')
+		for i in range(firstRow, lastRow):
+			index = self.__model.index(i, 0)
+			device = self.__model.dataFromIndex(index)
+			services = bluetooth.find_service(address=device.mac())
+			self.__model.setData(index, ('services', services), QtCore.Qt.EditRole)
+
+		print("Services are loaded for scanned devices")

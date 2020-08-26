@@ -1,11 +1,12 @@
 from PySide2 import QtCore
 from models.devices import BaseDevice, EVCDevice, HeadphoneDevice, LaptopDevice, PhoneDevice
+from models.Enum import DeviceTypes
 
 
 class ListModel(QtCore.QAbstractListModel):
 	def __init__(self,  adapter = None, parent = None):
 		super().__init__(parent)
-		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:FD:4D:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "XZ:4G:F3:F1:LF:55", False), PhoneDevice.PhoneDevice("iPhone", "KL:LF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
+		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:FD:4D:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), PhoneDevice.PhoneDevice("iPhone", "41:AF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
 		self.__adapter = adapter
 
 	def rowCount(self, index):
@@ -51,6 +52,48 @@ class ListModel(QtCore.QAbstractListModel):
 
 		return self.createIndex(rowNr, 0, data)
 
+	def setData(self, index, value, role = QtCore.Qt.EditRole):
+		device = self.dataFromIndex(index)
+
+		if role == QtCore.Qt.UserRole:
+			if not isinstance(value, BaseDevice.BaseDevice):
+				return False
+
+			device.setName(value.name())
+			device.setMac(value.mac())
+			device.setDeviceClass(value.deviceClass())
+			device.setConnected(value.isConnected())
+			device.setServices(value.services())
+
+			if value.deviceType() == DeviceTypes.EVC:
+				device.setStatus(device.status())
+
+			return True
+
+		elif role == QtCore.Qt.EditRole:
+			editType, editValue = value
+			if editType == 'services':
+				device.setServices(editValue)
+
+			elif editType == 'mac':
+				device.setMac(editValue)
+
+			elif editType == 'name':
+				device.setName(editValue)
+
+			elif editType == 'deviceClass':
+				device.setDeviceClass(editValue)
+
+			elif editType == 'isConnected':
+				device.setConnected(editValue)
+
+			else:
+				return False
+
+			return True
+
+		return False
+
 	# Set self.__deviceList anew and reset model
 	def setDevices(self, deviceList):
 		self.beginResetModel()
@@ -62,7 +105,7 @@ class ListModel(QtCore.QAbstractListModel):
 
 	# Add one or more devices to model
 	def addDevice(self, deviceList):
-		self.beginInsertRows(QtCore.QModelIndex(), len(self.__deviceList), len(self.__deviceList) + len(devices) - 1)
+		self.beginInsertRows(QtCore.QModelIndex(), len(self.__deviceList), len(self.__deviceList) + len(deviceList) - 1)
 		devices = deviceList
 		if self.__adapter:
 			devices = self.__adapter.request(deviceList)
