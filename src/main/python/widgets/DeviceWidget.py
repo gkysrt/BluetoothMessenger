@@ -14,6 +14,8 @@ class DeviceWidget(QtWidgets.QLabel):
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
+		headerWidth = 110
+
 		self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 		self.setMaximumHeight(200)
 		mainLayout = QtWidgets.QHBoxLayout(self)
@@ -26,34 +28,55 @@ class DeviceWidget(QtWidgets.QLabel):
 		detailLayout = QtWidgets.QVBoxLayout(detailWidget)
 		detailLayout.setContentsMargins(0, 0, 0, 0)
 
-		self.__nameLabel = QtWidgets.QLabel(detailWidget)
-		self.__nameLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		nameContainerWidget = QtWidgets.QWidget(detailWidget)
+		nameContainerLayout = QtWidgets.QHBoxLayout(nameContainerWidget)
+		nameHeaderLabel = QtWidgets.QLabel("Device Name", nameContainerWidget)
+		nameHeaderLabel.setStyleSheet("font: bold;")
+		nameHeaderLabel.setFixedWidth(headerWidth)
+		self.__nameLabel = QtWidgets.QLabel(nameContainerWidget)
+		nameContainerLayout.addWidget(nameHeaderLabel)
+		nameContainerLayout.addWidget(self.__nameLabel)
 
-		self.__macLabel = QtWidgets.QLabel(detailWidget)
-		self.__macLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		macContainerWidget = QtWidgets.QWidget(detailWidget)
+		macContainerLayout = QtWidgets.QHBoxLayout(macContainerWidget)
+		macHeaderLabel = QtWidgets.QLabel("Mac Address")
+		macHeaderLabel.setStyleSheet("font: bold;")
+		macHeaderLabel.setFixedWidth(headerWidth)
+		self.__macLabel = QtWidgets.QLabel(macContainerWidget)
+		macContainerLayout.addWidget(macHeaderLabel)
+		macContainerLayout.addWidget(self.__macLabel)
 
-		self.__statusLabel = QtWidgets.QLabel(detailWidget)
-		self.__statusLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		statusContainerWidget = QtWidgets.QWidget(detailWidget)
+		statusContainerLayout = QtWidgets.QHBoxLayout(statusContainerWidget)
+		statusHeaderLabel = QtWidgets.QLabel("Device Status")
+		statusHeaderLabel.setStyleSheet("font: bold;")
+		statusHeaderLabel.setFixedWidth(headerWidth)
+		self.__statusLabel = QtWidgets.QLabel(statusContainerWidget)
+		statusContainerLayout.addWidget(statusHeaderLabel)
+		statusContainerLayout.addWidget(self.__statusLabel)
 
-		self.__durationLabel = QtWidgets.QLabel(detailWidget)
-		self.__durationLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		durationContainerWidget = QtWidgets.QWidget(detailWidget)
+		durationContainerLayout = QtWidgets.QHBoxLayout(durationContainerWidget)
+		durationHeaderLabel = QtWidgets.QLabel("Duration")
+		durationHeaderLabel.setStyleSheet("font: bold;")
+		durationHeaderLabel.setFixedWidth(headerWidth)
+		self.__durationLabel = QtWidgets.QLabel(durationContainerWidget)
+		durationContainerLayout.addWidget(durationHeaderLabel)
+		durationContainerLayout.addWidget(self.__durationLabel)
 
-		# bottomSpacerWidget = QtWidgets.QWidget(detailWidget)
-		# bottomSpacerWidget.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+		self.setDuration("1h 30m")
+		self.setMac("CC:3F:48:FD:4D:77")
+		self.setName("am337x-evmsk")
+		self.setStatus("Ready")
 
-		self.setDuration("")
-		self.setMac("")
-		self.setName("")
-		self.setStatus("")
-
-		detailLayout.addWidget(self.__nameLabel)
-		detailLayout.addWidget(self.__macLabel)
-		detailLayout.addWidget(self.__statusLabel)
-		detailLayout.addWidget(self.__durationLabel)
-		# detailLayout.addWidget(bottomSpacerWidget)
+		detailLayout.addWidget(nameContainerWidget)
+		detailLayout.addWidget(macContainerWidget)
+		detailLayout.addWidget(statusContainerWidget)
+		detailLayout.addWidget(durationContainerWidget)
 
 		mainLayout.addWidget(self.__iconLabel)
 		mainLayout.addWidget(detailWidget)
+
 
 	def initSignalsAndSlots(self):
 		pass
@@ -62,18 +85,18 @@ class DeviceWidget(QtWidgets.QLabel):
 		self.__iconLabel.setPixmap(icon)
 
 	def setName(self, name):
-		self.__nameLabel.setText("Device Name: %s".format(str(name)))
+		self.__nameLabel.setText("{}".format(str(name)))
 
 	def setMac(self, mac):
-		self.__macLabel.setText("MAC Address: %s".format(str(mac)))
+		self.__macLabel.setText("{}".format(str(mac)))
 
 	def setStatus(self, status):
 		# TODO: Should take enum and change status indicators and text accordingly
-		self.__statusLabel.setText("Status: ..")
+		self.__statusLabel.setText("{}".format(str(status)))
 
 	def setDuration(self, time):
 		# TODO: Duration calculation here
-		self.__durationLabel.setText("Duration: %s".format(str(time)))
+		self.__durationLabel.setText("{}".format(str(time)))
 
 	def resizeEvent(self, event):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())

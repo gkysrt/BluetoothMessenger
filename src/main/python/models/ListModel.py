@@ -5,7 +5,7 @@ from models.devices import BaseDevice, EVCDevice, HeadphoneDevice, LaptopDevice,
 class ListModel(QtCore.QAbstractListModel):
 	def __init__(self,  adapter = None, parent = None):
 		super().__init__(parent)
-		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:SD:4R:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "XZ:4G:F3:F1:LF:55", False), PhoneDevice.PhoneDevice("iPhone", "KL:LF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
+		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:FD:4D:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "XZ:4G:F3:F1:LF:55", False), PhoneDevice.PhoneDevice("iPhone", "KL:LF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
 		self.__adapter = adapter
 
 	def rowCount(self, index):
