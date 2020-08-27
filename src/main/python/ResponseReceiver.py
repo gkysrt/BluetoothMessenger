@@ -14,8 +14,7 @@ class ResponseReceiver(QtCore.QObject):
 
     def receive(self):
         try:
-            # TODO: socket.recv() can't be killed on program exit, better fix needed
-            msg = str(self.__socket.recv(4096), 'utf8')
+            msg = str(self.__socket.rqecv(4096), 'utf8')
             print("Received message from socket: %s" % msg)
 
         # Whenever socket.recv() runs and there is no  message to get, recv raises an exception
