@@ -7,6 +7,7 @@ from utility import QssLoader
 from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
 	DisconnectCommand, ConnectCommand, ServiceCommand
 import bluetooth
+import ResponseReceiver
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -18,6 +19,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		self.__listView = None
 		self.__listHeader = None
+
+		self.__responseReceiver = None
 
 		self.__socket = None
 		self.__model = None
@@ -113,6 +116,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def initSignalsAndSlots(self):
 		self.__commandThread.successful.connect(self.onCommandThreadSuccess)
+		self.__commandThread.failed.connect(self.onCommandThreadFail)
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
@@ -124,6 +128,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def initialize(self):
 		self.initBluetoothSocket()
+		self.__responseReceiver = ResponseReceiver.ResponseReceiver()
 		self.__commandThread = Thread.Thread(self)
 		self.__serviceLoaderThread = Thread.Thread(self)
 
@@ -151,6 +156,15 @@ class MainWindow(QtWidgets.QMainWindow):
 			self.close()
 		super().keyPressEvent(event)
 
+	def closeEvent(self, event):
+		if self.__responseReceiver.isRunning():
+			self.__responseReceiver.stop()
+			self.__responseReceiver.close()
+
+		self.__commandThread.quit()
+		self.__serviceLoaderThread.quit()
+		super().closeEvent(event)
+
 	# ------------- SLOTS -------------
 	def onStopButtonClick(self, checked = False):
 		if not self.__commandThread.isRunning():
@@ -177,9 +191,43 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def onCommandThreadSuccess(self, returnValue):
 		if returnValue.get('command') == 'scan':
-			devices = returnValue.get('devices')
-			self.__model.setDevices(devices)
 			self.__listHeader.setScanButtonEnabled(True)
+
+			if returnValue.get('result') == 'successful':
+				devices = returnValue.get('devices')
+				self.__model.setDevices(devices)
+
+		if returnValue.get('command') == 'connect':
+			if returnValue.get('result') == 'failed':
+				self.initBluetoothSocket()
+			elif returnValue.get('result') == 'successful':
+				connectedDeviceName = returnValue.get('name', None)
+				connectedDeviceMac = returnValue.get('mac', None)
+				matchingDevices = self.__model.getFilteredDevices(name=connectedDeviceName, mac=connectedDeviceMac)
+				connectedDevice = None
+				if len(matchingDevices) == 1:
+					connectedDevice = matchingDevices.pop()
+
+				if connectedDevice:
+					index = self.__model.indexFromData(connectedDevice)
+					self.__model.setData(index, ('isConnected', True), QtCore.Qt.EditRole)
+
+				self.__responseReceiver.setSocket(self.__socket.dup())
+				if not self.__responseReceiver.isRunning():
+					self.__responseReceiver.start()
+			self.__listView.repaint()
+
+		if returnValue.get('command') == 'disconnect' and returnValue.get('result') == 'successful':
+			disconnectedDeviceIndex = self.__model.indexFromData(self.__model.connectedDevice())
+			self.__model.setData(disconnectedDeviceIndex, ('isConnected', False), QtCore.Qt.EditRole)
+
+			self.initBluetoothSocket()
+			if self.__responseReceiver.isRunning():
+				self.__responseReceiver.stop()
+
+			self.__listView.repaint()
+
+		print(returnValue)
 
 	def onCommandThreadFail(self, exception):
 		print("Command thread failed to execute command - Error: {}".format(str(exception)))
@@ -205,3 +253,4 @@ class MainWindow(QtWidgets.QMainWindow):
 			self.__model.setData(index, ('services', services), QtCore.Qt.EditRole)
 
 		print("Services are loaded for scanned devices")
+

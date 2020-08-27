@@ -14,13 +14,14 @@ class ResponseReceiver(QtCore.QObject):
 
     def receive(self):
         try:
-            msg = str(self.__socket.rqecv(4096), 'utf8')
+            msg = str(self.__socket.recv(4096), 'utf8')
             print("Received message from socket: %s" % msg)
 
         # Whenever socket.recv() runs and there is no  message to get, recv raises an exception
         # that we dont want
         except Exception as e:
-            print("Receive encountered an error, ", str(e))
+            pass
+            # print("Receive encountered an error, ", str(e))
 
     def setSocket(self, socket):
         self.__socket = socket
@@ -44,3 +45,7 @@ class ResponseReceiver(QtCore.QObject):
 
     def onWorkerThreadFail(self, exception):
         print(exception)
+
+    def close(self):
+        self.__workerThread.quit()
+        self.__socket.close()

@@ -127,3 +127,31 @@ class ListModel(QtCore.QAbstractListModel):
 				connectedDevice = device
 
 		return connectedDevice
+
+	# Returns devices in a list with given conditions
+	def getFilteredDevices(self, **kwargs):
+		name = kwargs.get('name', None)
+		mac = kwargs.get('mac', None)
+		deviceClass = kwargs.get('deviceClass', None)
+		deviceType = kwargs.get('deviceType', None)
+
+		filteredList = []
+		for device in self.__deviceList:
+			shouldAdd = True
+
+			if name is not None and not name == device.name():
+				shouldAdd = False
+
+			if mac is not None and not mac == device.mac():
+				shouldAdd = False
+
+			if deviceClass is not None and not deviceClass == device.deviceClass():
+				shouldAdd = False
+
+			if deviceType is not None and not deviceType == device.deviceType():
+				shouldAdd = False
+
+			if shouldAdd:
+				filteredList.append(device)
+
+		return filteredList

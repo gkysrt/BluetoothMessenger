@@ -43,6 +43,8 @@ class Plugin(BaseCommand.BaseCommand):
 
         macAddress = argList.pop(0)
         portNr = 1
+        name = kwargs.get('name', None)
+
         for i in range(len(argList)):
             if argList[i] == "-p" or argList[i] == "--port":
                 portNr = argList[i + 1]
@@ -64,7 +66,7 @@ class Plugin(BaseCommand.BaseCommand):
         time.sleep(0.5)
         socket.send(json.dumps(configParamRequest).encode())
 
-        return {"command": self.command(), "result": "successful"}
+        return {"command": self.command(), "result": "successful", "mac": macAddress, "portNumber": portNr, "name": name}
 
     def executeUI(self, **kwargs):
         socket = kwargs.get('socket')
@@ -72,6 +74,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         macAddress = kwargs.get('mac')
         portNr = kwargs.get('port', 1)
+        name = kwargs.get('name', None)
 
         try:
             socket.connect((macAddress, int(portNr)))
@@ -90,4 +93,4 @@ class Plugin(BaseCommand.BaseCommand):
         time.sleep(0.5)
         socket.send(json.dumps(configParamRequest).encode())
 
-        return {"command": self.command(), "result": "successful"}
+        return {"command": self.command(), "result": "successful", "mac": macAddress, "portNumber": portNr, "name": name}

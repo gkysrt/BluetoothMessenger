@@ -25,7 +25,6 @@ class Thread(QtCore.QThread):
 					returnValue = self.__func()
 
 			except Exception as e:
-				print("Thread failed:", str(e))
 				self.failed.emit(e)
 				return
 

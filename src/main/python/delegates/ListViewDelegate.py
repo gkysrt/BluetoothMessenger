@@ -17,6 +17,7 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		self.__oddColor = QtGui.QColor(166, 166, 166)
 		self.__evenColor = QtGui.QColor(191, 191, 191)
 		self.__textColor = QtGui.QColor(64, 64, 64)
+		self.__connectedTextColor = QtGui.QColor(40, 144, 229)
 
 		appCore = ApplicationCore.getInstance()
 		self.__iconEVC = QtGui.QPixmap(appCore.getIcon('evc_device.png'))
@@ -39,7 +40,10 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		device = index.data(QtCore.Qt.UserRole)
 		rectangle = option.rect
 		fontMetrics = option.fontMetrics
-		painter.setPen(self.__textColor)
+		if device.isConnected():
+			painter.setPen(self.__connectedTextColor)
+		else:
+			painter.setPen(self.__textColor)
 
 		deviceName = device.name()
 		deviceMac = device.mac()
