@@ -235,7 +235,8 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onListItemClick(self, index):
 		if not self.__commandThread.isRunning():
 			device = self.__model.dataFromIndex(index)
-			self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)
+			if not device.isConnected():
+				self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)
 
 	def onDeviceAdded(self, parent, first, last):
 		self.__serviceLoaderThread.start(self.loadServices, first=first, last=last)

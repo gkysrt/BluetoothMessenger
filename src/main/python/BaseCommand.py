@@ -6,6 +6,7 @@ from PySide2 import QtWidgets
 class BaseCommand(QtWidgets.QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.setupUi()
 
     @classmethod
     def options(cls):
