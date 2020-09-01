@@ -1,7 +1,8 @@
 from PySide2 import QtWidgets, QtCore
+from observer import BaseObserver
 
 
-class DeviceWidget(QtWidgets.QLabel):
+class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 	def __init__(self, parent = None):
 		super().__init__(parent)
 		self.__iconLabel = None
@@ -101,3 +102,6 @@ class DeviceWidget(QtWidgets.QLabel):
 	def resizeEvent(self, event):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
 		super().resizeEvent(event)
+
+	def update(self, state):
+		print("DeviceWidget received info on evc state: {}".format(str(state)))

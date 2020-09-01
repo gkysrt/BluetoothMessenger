@@ -6,6 +6,18 @@ class DeviceTypes(Enum):
 
 
 class EVCStatus(Enum):
-    AUTHORIZATION, CHARGE_POINT, FIRMWARE_UPDATE, CHARGE_SESSION, CURRENT_CHARGE_SESSION, \
-    CACHED_CHARGE_SESSION, DELAY_CHARGE_REMAINING_TIME, MASTER_CARD, USER_CARD, \
-    METRICS, MIN_CURRENT, MAX_CURRENT, POWER_OPT_MIN, POWER_OPT_MAX = list(range(0, 14))
+    AUTHORIZATION = "Charger.EVC.Status.Authorization"
+    CHARGE_POINT = "Charger.EVC.Status.ChargePoint"
+    FIRMWARE_UPDATE = "Charger.EVC.Status.FirmwareUpdate"
+    CHARGE_SESSION = "Charger.EVC.Status.ChargeSession"
+    CURRENT_CHARGE_SESSION = "Charger.EVC.Status.CurrentChargeSession"
+    CACHED_CHARGE_SESSION = "Charger.EVC.Status.CachedChargeSession"
+    DELAY_CHARGE_REMAINING_TIME = "Charger.EVC.Status.DelayChargeRemainingTime"
+    MASTER_CARD = "Charger.EVC.Status.MasterCard"
+    USER_CARD = "Charger.EVC.Status.UserCard"
+    METRICS = "Charger.EVC.Status.Metrics"
+    MIN_CURRENT = "Charger.EVC.Status.MinCurrent"
+    MAX_CURRENT = "Charger.EVC.Status.MaxCurrent"
+    POWER_OPT_MIN = "Charger.EVC.Status.PowerOptimizerMin"
+    POWER_OPT_MAX = "Charger.EVC.Status.PowerOptimizerMax"
+

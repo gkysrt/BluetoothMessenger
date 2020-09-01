@@ -3,6 +3,8 @@ from models import Thread
 
 
 class ResponseReceiver(QtCore.QObject):
+    responseReceived = QtCore.Signal(object)
+
     def __init__(self, socket=None, parent = None):
         super().__init__(parent)
         self.__socket = socket  # Socket to listen to
@@ -41,7 +43,7 @@ class ResponseReceiver(QtCore.QObject):
         self.__workerThread.breakLoop()
 
     def onWorkerThreadSuccess(self, returnValue):
-        print(returnValue)
+        self.responseReceived.emit(returnValue)
 
     def onWorkerThreadFail(self, exception):
         print(exception)

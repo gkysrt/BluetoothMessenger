@@ -13,9 +13,9 @@ class BaseCommand(QtWidgets.QWidget):
         """
         :param
         :return set
-        options() function simply returns available options in type set.
-        e.g set("-v", "-h", "-t")
-        Returned set is used for displaying in manual and also crucial for predefining available options
+        options() function simply returns available options in type tuple.
+        e.g tuple("-v", "-h", "-t")
+        Returned tuple is used for displaying in manual and also crucial for predefining available options
         """
         raise Exception("Plugin inherits BaseCommand should return accepted option strings in type set")
 

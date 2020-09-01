@@ -1,6 +1,7 @@
 from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
+from models.Enum import EVCStatus
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
 from models import ModelFilter, ModelAdapter, Thread
 from utility import QssLoader
@@ -8,27 +9,38 @@ from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand
 	DisconnectCommand, ConnectCommand, ServiceCommand
 import bluetooth
 import ResponseReceiver
+import DeviceContext
 
 
 class MainWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent = None):
 		super().__init__(parent)
+		# Initializing variables that'll be used in MainWindow class
+
+		# Buttons
 		self.__authorizeButton = None
 		self.__startChargeButton = None
 		self.__stopChargeButton = None
 
+		# Widgets
 		self.__listView = None
 		self.__listHeader = None
+		self.__deviceWidget = None
 
+		# Response receiver & device context that's affected by received messages
 		self.__responseReceiver = None
+		self.__deviceContext = None
 
+		# BT socket, ListModel and adapter for the model
 		self.__socket = None
 		self.__model = None
 		self.__modelAdapter = None
 
+		# Threads for executing commands & loading services of scanned BT devices
 		self.__commandThread = None
 		self.__serviceLoaderThread = None
 
+		# Some main commands
 		self.__authorizeCmd = None
 		self.__pauseCmd = None
 		self.__resumeCmd = None
@@ -39,9 +51,16 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__connectCmd = None
 		self.__disconnectCmd = None
 
+		# QSSLoader class, used to load qss
 		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
+
+		# Setup UI and widgets
 		self.setupUi()
+
+		# Initialize objects and start program
 		self.initialize()
+
+		# Initialize signals and slots
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
@@ -83,7 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		deviceWindowLayout.setSpacing(0)
 		deviceWindowLayout.setContentsMargins(0, 0, 0, 0)
 
-		deviceWidget = DeviceWidget.DeviceWidget(deviceWindow)
+		self.__deviceWidget = DeviceWidget.DeviceWidget(deviceWindow)
 
 		buttonContainerWidget = QtWidgets.QWidget(deviceWindow)
 		buttonContainerLayout = QtWidgets.QHBoxLayout(buttonContainerWidget)
@@ -107,7 +126,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		commandPanelWidget = CommandPanelWidget.CommandPanelWidget(deviceWindow)
 
-		deviceWindowLayout.addWidget(deviceWidget)
+		deviceWindowLayout.addWidget(self.__deviceWidget)
 		deviceWindowLayout.addWidget(buttonContainerWidget)
 		deviceWindowLayout.addWidget(commandPanelWidget)
 
@@ -125,10 +144,14 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listView.clicked.connect(self.onListItemClick)
 		self.__model.rowsInserted.connect(self.onDeviceAdded)
 		self.__model.modelReset.connect(self.onDeviceModelReset)
+		self.__responseReceiver.responseReceived(self.onResponseReceived)
 
 	def initialize(self):
 		self.initBluetoothSocket()
+
 		self.__responseReceiver = ResponseReceiver.ResponseReceiver()
+		self.__deviceContext = DeviceContext.DeviceContext()
+
 		self.__commandThread = Thread.Thread(self)
 		self.__serviceLoaderThread = Thread.Thread(self)
 
@@ -144,11 +167,37 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		self.__modelAdapter = ModelAdapter.ModelAdapter()
 		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
+
 		self.__listView.setModel(self.__model)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.AUTHORIZATION)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_POINT)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.FIRMWARE_UPDATE)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_SESSION)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CURRENT_CHARGE_SESSION)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CACHED_CHARGE_SESSION)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.DELAY_CHARGE_REMAINING_TIME)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MASTER_CARD)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.USER_CARD)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.METRICS)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MIN_CURRENT)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MAX_CURRENT)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MAX)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MIN)
 
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 		self.__socket.setblocking(True)
+
+	def loadServices(self, **kwargs):
+		firstRow = kwargs.get('first')
+		lastRow = kwargs.get('last')
+		for i in range(firstRow, lastRow):
+			index = self.__model.index(i, 0)
+			device = self.__model.dataFromIndex(index)
+			services = bluetooth.find_service(address=device.mac())
+			self.__model.setData(index, ('services', services), QtCore.Qt.EditRole)
+
+		print("Services are loaded for scanned devices")
 
 	# ------------- EVENT HANDLING -------------
 	def keyPressEvent(self, event):
@@ -214,6 +263,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 				self.__responseReceiver.setSocket(self.__socket.dup())
 				if not self.__responseReceiver.isRunning():
+					self.__deviceContext.reset()
 					self.__responseReceiver.start()
 			self.__listView.repaint()
 
@@ -224,6 +274,7 @@ class MainWindow(QtWidgets.QMainWindow):
 			self.initBluetoothSocket()
 			if self.__responseReceiver.isRunning():
 				self.__responseReceiver.stop()
+				self.__deviceContext.reset()
 
 			self.__listView.repaint()
 
@@ -244,14 +295,9 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onDeviceModelReset(self):
 		self.__serviceLoaderThread.start(self.loadServices, first=0, last=self.__model.rowCount(QtCore.QModelIndex()))
 
-	def loadServices(self, **kwargs):
-		firstRow = kwargs.get('first')
-		lastRow = kwargs.get('last')
-		for i in range(firstRow, lastRow):
-			index = self.__model.index(i, 0)
-			device = self.__model.dataFromIndex(index)
-			services = bluetooth.find_service(address=device.mac())
-			self.__model.setData(index, ('services', services), QtCore.Qt.EditRole)
+	def onResponseReceived(self, response):
+		print(response)
 
-		print("Services are loaded for scanned devices")
-
+		statusList = response.get('status')
+		for status in statusList:
+			self.__deviceContext.setState(status.get('values'), status.get('key'))
