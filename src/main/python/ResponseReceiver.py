@@ -17,7 +17,6 @@ class ResponseReceiver(QtCore.QObject):
     def receive(self):
         try:
             msg = str(self.__socket.recv(4096), 'utf8')
-            print("Received message from socket: %s" % msg)
 
         # Whenever socket.recv() runs and there is no  message to get, recv raises an exception
         # that we dont want

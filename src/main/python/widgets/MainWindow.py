@@ -144,7 +144,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listView.clicked.connect(self.onListItemClick)
 		self.__model.rowsInserted.connect(self.onDeviceAdded)
 		self.__model.modelReset.connect(self.onDeviceModelReset)
-		self.__responseReceiver.responseReceived(self.onResponseReceived)
+		self.__responseReceiver.responseReceived.connect(self.onResponseReceived)
 
 	def initialize(self):
 		self.initBluetoothSocket()
