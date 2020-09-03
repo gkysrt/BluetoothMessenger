@@ -10,6 +10,7 @@ from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand
 import bluetooth
 import ResponseReceiver
 import DeviceContext
+import json
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -296,8 +297,19 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__serviceLoaderThread.start(self.loadServices, first=0, last=self.__model.rowCount(QtCore.QModelIndex()))
 
 	def onResponseReceived(self, response):
+		# Handling the response from device
+		# TODO: An adapter that transforms incoming messages from device?
 		print(response)
+		jsonResponse = json.loads(response)
+		chargePoints = jsonResponse.get('chargePoints')
+		for chargePoint in chargePoints:
+			connectorID = chargePoint.get('connectorID')
+			self.__deviceContext.addChargePoint(connectorID)
 
-		statusList = response.get('status')
-		for status in statusList:
-			self.__deviceContext.setState(status.get('values'), status.get('key'))
+			statuses = chargePoint.get('status')
+			for status in statuses:
+				self.__deviceContext.setState(status.get('value'), status.get('key'), connectorID)
+
+			settings = chargePoint.get('settings')
+			for setting in settings:
+				self.__deviceContext.setState(setting.get('value'), setting.get('key'), connectorID)
