@@ -105,3 +105,4 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 
 	def update(self, state):
 		print("DeviceWidget received info on evc state: {}".format(str(state)))
+
