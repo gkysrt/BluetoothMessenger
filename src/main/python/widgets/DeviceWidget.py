@@ -1,5 +1,7 @@
 from PySide2 import QtWidgets, QtCore
 from observer import BaseObserver
+import json
+from models.Enum import EVCStatus
 
 
 class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
@@ -65,7 +67,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		durationContainerLayout.addWidget(durationHeaderLabel)
 		durationContainerLayout.addWidget(self.__durationLabel)
 
-		self.setDuration("1h 30m")
+		self.setDuration("-")
 		self.setMac("CC:3F:48:FD:4D:77")
 		self.setName("am337x-evmsk")
 		self.setStatus("Ready")
@@ -103,6 +105,10 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
 		super().resizeEvent(event)
 
-	def update(self, state):
-		print("DeviceWidget received info on evc state: {}".format(str(state)))
-
+	def update(self, **kwargs):
+		print("DeviceWidget received info on evc state: {}".format(str(kwargs)))
+		connectorID = kwargs.get('connectorID')
+		key = kwargs.get('key')
+		value = kwargs.get('value')
+		if key == EVCStatus.CURRENT_CHARGE_SESSION.value:
+			self.setDuration(value.get('duration'))

@@ -170,20 +170,20 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
 
 		self.__listView.setModel(self.__model)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.AUTHORIZATION)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_POINT)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.FIRMWARE_UPDATE)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_SESSION)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CURRENT_CHARGE_SESSION)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CACHED_CHARGE_SESSION)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.DELAY_CHARGE_REMAINING_TIME)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MASTER_CARD)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.USER_CARD)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.METRICS)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MIN_CURRENT)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MAX_CURRENT)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MAX)
-		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MIN)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.AUTHORIZATION.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_POINT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.FIRMWARE_UPDATE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_SESSION.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CURRENT_CHARGE_SESSION.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CACHED_CHARGE_SESSION.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.DELAY_CHARGE_REMAINING_TIME.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MASTER_CARD.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.USER_CARD.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.METRICS.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MIN_CURRENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MAX_CURRENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MAX.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MIN.value)
 
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
@@ -204,6 +204,13 @@ class MainWindow(QtWidgets.QMainWindow):
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Escape:
 			self.close()
+
+		if event.key() == QtCore.Qt.Key_S:
+			self.onScanSignal()
+
+		if event.key() == QtCore.Qt.Key_D:
+			self.onDisconnectSignal()
+
 		super().keyPressEvent(event)
 
 	def closeEvent(self, event):
@@ -299,17 +306,20 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onResponseReceived(self, response):
 		# Handling the response from device
 		# TODO: An adapter that transforms incoming messages from device?
-		print(response)
 		jsonResponse = json.loads(response)
 		chargePoints = jsonResponse.get('chargePoints')
 		for chargePoint in chargePoints:
-			connectorID = chargePoint.get('connectorID')
+			connectorID = chargePoint.get('connectorId')
 			self.__deviceContext.addChargePoint(connectorID)
 
-			statuses = chargePoint.get('status')
+			statuses = chargePoint.get('status', [])
 			for status in statuses:
 				self.__deviceContext.setState(status.get('value'), status.get('key'), connectorID)
 
-			settings = chargePoint.get('settings')
+			settings = chargePoint.get('settings', [])
 			for setting in settings:
 				self.__deviceContext.setState(setting.get('value'), setting.get('key'), connectorID)
+
+			programs = chargePoint.get('programs', [])
+			for program in programs:
+				self.__deviceContext.setState(program.get('value'), program.get('key'), connectorID)

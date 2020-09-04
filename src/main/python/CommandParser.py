@@ -42,7 +42,6 @@ class CommandParser(object):
     # Searches for possible plugins and stores them dict
     def loadCommands(self):
         # Search for files that may be plug-ins on predefined directory
-        print(self.COMMANDS_DIRECTORY)
         for file in os.listdir(self.COMMANDS_DIRECTORY):
             name, extension = os.path.splitext(file)
 

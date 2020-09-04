@@ -20,7 +20,7 @@ class DeviceContext(BaseContext.BaseContext):
 
     def attach(self, observer: BaseObserver, key: object) -> None:
         if key not in self.__observerDict.keys():
-            self.__observerDict[key] = observer
+            self.__observerDict[key] = [observer]
 
         else:
             observerList = self.__observerDict.get(key)
@@ -40,7 +40,7 @@ class DeviceContext(BaseContext.BaseContext):
         if key in self.__observerDict.keys():
             observerList = self.__observerDict.get(key)
             for observer in observerList:
-                observer.update(connectorID = connectorID, key = key, state = self.state(key, connectorID))
+                observer.update(connectorID = connectorID, key = key, value = self.state(key, connectorID))
         else:
             return
 
