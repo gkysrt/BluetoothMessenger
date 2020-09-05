@@ -67,7 +67,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		durationContainerLayout.addWidget(durationHeaderLabel)
 		durationContainerLayout.addWidget(self.__durationLabel)
 
-		self.setDuration("-")
+		self.__durationLabel.setText("-")
 		self.setMac("CC:3F:48:FD:4D:77")
 		self.setName("am337x-evmsk")
 		self.setStatus("Ready")
@@ -99,7 +99,19 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 
 	def setDuration(self, time):
 		# TODO: Duration calculation here
-		self.__durationLabel.setText("{}".format(str(time)))
+		# Incoming time is in minutes
+		day = int(time / (60 * 24))
+		hour = int(time / 60)
+		minute = time % 60
+
+		if day > 0:
+			durationString = "{} days - {} hours - {} minutes".format(str(day), str(hour), str(minute))
+		elif hour > 0:
+			durationString = "{} hours - {} minutes".format(str(hour), str(minute))
+		else:
+			durationString = "{} minutes".format(str(minute))
+
+		self.__durationLabel.setText(durationString)
 
 	def resizeEvent(self, event):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
