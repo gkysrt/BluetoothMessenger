@@ -37,5 +37,9 @@ class Plugin(BaseCommand.BaseCommand):
         # TODO: INCOMPLETE
         maxCurrent = int(argList.pop(0))
 
-    # for arg in argList:
-    #     print()
+    def executeUI(self, **kwargs):
+        # TODO: INCOMPLETE
+        pass
+
+    def setupUi(self):
+        pass

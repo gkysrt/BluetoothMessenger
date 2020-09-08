@@ -38,3 +38,10 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
         currentLimit = int(argList.pop(0))
+
+    def executeUI(self, **kwargs):
+        # TODO: INCOMPLETE
+        pass
+
+    def setupUi(self):
+        pass

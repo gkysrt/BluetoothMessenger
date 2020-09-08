@@ -101,3 +101,54 @@ class Plugin(BaseCommand.BaseCommand):
         except Exception as e:
             print("Failed to send eco-charge request: %s" % str(e))
             return {"command": self.command(), "result": "failed"}
+
+    def executeUI(self, **kwargs):
+        onOffArgument = "on"
+        startTime = 0
+        endTime = 0
+        connectorID = 1
+
+        socket = kwargs.get('socket')
+        print("Requesting echo charge: ", onOffArgument)
+
+        try:
+            if onOffArgument.lower() == "off":
+                ecoChargeRequest = {"chargePoints": [{"connectorId": connectorID, "programs": [
+                    {"key": "Charger.EVC.Program.EcoCharge", "value": "false"}]}]}
+                socket.send(json.dumps(ecoChargeRequest).encode())
+                return {"command": self.command(), "result": "successful"}
+
+            elif onOffArgument.lower() == "on":
+                ecoChargeRequest = {
+                    "chargePoints": [{
+                        "connectorId": connectorID,
+                        "programs": [{
+                            "key": "Charger.EVC.Program.EcoCharge",
+                            "value": "true"
+                        }],
+                        "options": [
+                            {
+                                "key": "Charger.EVC.Option.EcoChargeStartTime",
+                                "value": startTime
+                            },
+                            {
+                                "key": "Charger.EVC.Option.EcoChargeStopTime",
+                                "value": endTime
+                            }]
+                    }]
+                }
+                socket.send(json.dumps(ecoChargeRequest).encode())
+                print("Eco charge is successfully requested {} with start time: {} end time: {}".format(onOffArgument,
+                                                                                                        str(startTime),
+                                                                                                        str(endTime)))
+                return {"command": self.command(), "result": "successful"}
+
+            else:
+                raise Exception("Second argument should be on/off")
+
+        except Exception as e:
+            print("Failed to send eco-charge request: %s" % str(e))
+            return {"command": self.command(), "result": "failed"}
+
+    def setupUi(self):
+        pass

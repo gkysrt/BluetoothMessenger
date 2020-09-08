@@ -39,7 +39,8 @@ class Plugin(BaseCommand.BaseCommand):
 
         socket = kwargs.get('socket')
 
-    # print("Requesting free charge")
-    # socket.send(b'{"chargePoints": [{"connectorId": 1,"command": [{"key": "Charger.EVC.Command.Authorize"}]}]}')
-    #
-    # return {"command: free-charge"}
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+
+    def setupUi(self):
+        pass

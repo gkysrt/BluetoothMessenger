@@ -82,14 +82,20 @@ QTabWidget
 QTabWidget QWidget
 {
     background-color: rgb(229, 229, 229);
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
 }
 
 QTabWidget::pane {
     border-style: none;
 	border-width: 0px;
-	border: 0px;
+	border: 0px solid red;
+/*	border-radius: 15px; */
     border-top: 0px solid rgb(50, 50, 50);
+}
 
+QTabWidget::pane QWidget {
+    border-radius: 4px;
 }
 
 QTabWidget QTabBar {
@@ -134,8 +140,20 @@ QTabWidget QTabBar::tab:hover:!selected {
 
 QTabWidget QToolTip
 {
-    background-color:rgb(64,64,64);
-    color:white;
+    background-color:rgb(64, 64, 64);
+    color: rgb(192, 192, 192);
+}
+
+QLineEdit
+{
+    border: 1px solid rgb(64, 64, 64);
+    color:rgb(64, 64, 64);
+    border-radius: 2px;
+    margin-left: 8px;
+}
+
+QComboBox {
+    background-color: red;
 }
 
 /*
@@ -154,5 +172,6 @@ QTabWidget QPushButton[cornerbutton= "true"]:pressed
     color:rgb(250, 175, 0);
 }
 */
+
 
 

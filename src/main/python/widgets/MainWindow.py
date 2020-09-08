@@ -27,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listView = None
 		self.__listHeader = None
 		self.__deviceWidget = None
+		self.__commandPanelWidget = None
 
 		# Response receiver & device context that's affected by received messages
 		self.__responseReceiver = None
@@ -125,11 +126,12 @@ class MainWindow(QtWidgets.QMainWindow):
 		buttonContainerLayout.addWidget(self.__startChargeButton)
 		buttonContainerLayout.addWidget(self.__stopChargeButton)
 
-		commandPanelWidget = CommandPanelWidget.CommandPanelWidget(deviceWindow)
+		self.__commandPanelWidget = CommandPanelWidget.CommandPanelWidget(deviceWindow)
+		# self.__commandPanelWidget.setFixedHeight(200)
 
 		deviceWindowLayout.addWidget(self.__deviceWidget)
 		deviceWindowLayout.addWidget(buttonContainerWidget)
-		deviceWindowLayout.addWidget(commandPanelWidget)
+		deviceWindowLayout.addWidget(self.__commandPanelWidget)
 
 		centralLayout.addWidget(listWindow)
 		centralLayout.addWidget(deviceWindow)
@@ -137,6 +139,7 @@ class MainWindow(QtWidgets.QMainWindow):
 	def initSignalsAndSlots(self):
 		self.__commandThread.successful.connect(self.onCommandThreadSuccess)
 		self.__commandThread.failed.connect(self.onCommandThreadFail)
+		self.__commandPanelWidget.executeRequested.connect(self.onExecuteRequest)
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
@@ -245,6 +248,11 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onDisconnectSignal(self):
 		if self.__model.connectedDevice() is not None and not self.__commandThread.isRunning():
 			self.__commandThread.start(self.__disconnectCmd.executeUI, socket = self.__socket)
+
+	def onExecuteRequest(self, commandObject):
+		print(commandObject)
+		if not self.__commandThread.isRunning():
+			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.keys())
 
 	def onCommandThreadSuccess(self, returnValue):
 		if returnValue.get('command') == 'scan':

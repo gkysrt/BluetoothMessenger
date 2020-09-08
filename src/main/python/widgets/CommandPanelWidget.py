@@ -1,5 +1,5 @@
 from ApplicationCore import ApplicationCore
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 from utility.PluginReader import PluginReader
 from BaseCommand import BaseCommand
 from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, FreeChargeCommand, InterfaceSettCommand, \
@@ -7,9 +7,13 @@ from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, FreeCharg
 
 
 class CommandPanelWidget(QtWidgets.QLabel):
+    executeRequested = QtCore.Signal(object)
+
     def __init__(self, parent = None):
         super().__init__(parent)
         self.__tabWidget = None
+        self.__executeButton = None
+
         self.__cmdDict = {}
 
         # Initialize commands, plug-ins
@@ -42,15 +46,20 @@ class CommandPanelWidget(QtWidgets.QLabel):
         self.__tabWidget.setMovable(False)
         self.__tabWidget.tabBar().setUsesScrollButtons(False)
 
+        self.__executeButton = QtWidgets.QPushButton(self)
+        self.__executeButton.setCursor(QtCore.Qt.PointingHandCursor)
+        self.__executeButton.setText("Execute")
+
         # Setup tabs
         for key in self.__cmdDict.keys():
             self.__tabWidget.addTab(self.__cmdDict.get(key), key)
 
         mainLayout.addWidget(titleLabel)
         mainLayout.addWidget(self.__tabWidget)
+        mainLayout.addWidget(self.__executeButton)
 
     def initSignalsAndSlots(self):
-        pass
+        self.__executeButton.clicked.connect(lambda: self.executeRequested.emit(self.__tabWidget.currentWidget()))
 
     def setIcon(self, icon):
         self.__iconLabel.setPixmap(icon)

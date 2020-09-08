@@ -16,6 +16,26 @@ class Plugin(BaseCommand.BaseCommand):
     __options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
     __cmd = "delay-charge"
     __name = "Delay Charge"
+    qss = """
+        QLineEdit
+        {
+            border: 1px solid rgb(64, 64, 64);
+            color:rgb(64, 64, 64);
+            border-radius: 2px;
+            background-color = rgb(92, 92, 92);
+            margin-left: 8px;
+        }
+        QLineEdit:focus
+        {
+            border: 1px solid rgb(40, 144, 229);
+            color: rgb(40, 144, 229);
+        }
+        QComboBox
+        {
+            border: none;
+            background-color: rgb(128, 128, 128);
+        }
+    """
 
     @classmethod
     def options(cls):
@@ -122,7 +142,7 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
     def executeUI(self, **kwargs):
-        delayEnabled = True
+        delayEnabled = self.__onOffComboBox.currentText()
         socket = kwargs.get('socket')
         connectorID = 1
 
@@ -130,7 +150,7 @@ class Plugin(BaseCommand.BaseCommand):
         timeUnit = "minute"
         delayChargeRequest = None
 
-        if delayEnabled == "on":
+        if delayEnabled.lower() == "on":
             # TODO: What is step, unit, min, max scale
             delayChargeRequest = {"chargePoints":
                 [{
@@ -145,7 +165,7 @@ class Plugin(BaseCommand.BaseCommand):
                     ]}
                 ]}
 
-        elif delayEnabled == "off":
+        elif delayEnabled.lower() == "off":
             delayChargeRequest = {
                 "chargePoints": [{
                     "connectorId": connectorID,
@@ -166,10 +186,13 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
     def setupUi(self):
+        self.setStyleSheet(self.qss)
         layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
 
         textEditWidget = QtWidgets.QWidget(self)
         textEditLayout = QtWidgets.QHBoxLayout(textEditWidget)
+
         self.__hours = QtWidgets.QLineEdit(textEditWidget)
         self.__hours.setPlaceholderText("Hour")
         self.__minutes = QtWidgets.QLineEdit(textEditWidget)

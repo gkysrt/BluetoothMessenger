@@ -125,3 +125,71 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Settings change is requested")
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+
+        connectorID = 1
+        timezone = None
+        lockableCable = None
+        availableCurrent = None
+        plugCharge = None
+
+        if not timezone and not lockableCable and not availableCurrent and not plugCharge:
+            print("Failed to request settings change, you must specify a setting change")
+            return {"command": "interface-setting", "result": "failed"}
+
+        # Body of settings request
+        settingsRequest = {
+            "chargePoints": [{
+                "connectorId": connectorID,
+            }],
+        }
+
+        # Settings list to be added to settings request
+        settingsList = list()
+
+        # Fill settingsList respective to existing commands
+        if timezone:
+            timezoneSetting = {
+                "key": "Charger.EVC.Setting.Timezone",
+                "value": str(timezone)
+            }
+            settingsList.append(timezoneSetting)
+
+        if lockableCable:
+            lockableCableSetting = {
+                "key": "Charger.EVC.Setting.LockableCable",
+                "value": lockableCable
+            }
+            settingsList.append(lockableCableSetting)
+
+        if availableCurrent:
+            availableCurrentSetting = {
+                "key": "Charger.EVC.Setting.AvailableCurrent",
+                "value": availableCurrent
+            }
+            settingsList.append(availableCurrentSetting)
+
+        if plugCharge:
+            plugChargeSetting = {
+                "key": "Charger.EVC.Setting.PlugAndCharge",
+                "value": plugCharge
+            }
+            settingsList.append(plugChargeSetting)
+
+        # Add settingsList to dictionary inside settingsRequest
+        settingsRequest.get("chargePoints")[0]["settings"] = settingsList
+
+        try:
+            socket.send(json.dumps(settingsRequest).encode())
+
+        except Exception as e:
+            print("Failed to send setting change request: ", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        print("Settings change is requested")
+        return {"command": self.command(), "result": "successful"}
+
+    def setupUi(self):
+        pass

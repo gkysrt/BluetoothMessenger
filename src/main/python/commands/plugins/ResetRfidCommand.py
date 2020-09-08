@@ -48,3 +48,22 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("User card reset is successfully requested")
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Requesting user card reset")
+
+        userCardResetRequest = {
+            "chargePoints": [{"connectorId": 0, "command": [{"key": "Charger.EVC.Command.UserCardReset"}]}]}
+        try:
+            socket.send(json.dumps(userCardResetRequest).encode())
+
+        except Exception as e:
+            print("Failed to send user card reset request", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        print("User card reset is successfully requested")
+        return {"command": self.command(), "result": "successful"}
+
+    def setupUi(self):
+        pass

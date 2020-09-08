@@ -70,3 +70,42 @@ class Plugin(BaseCommand.BaseCommand):
         except Exception as e:
             print("Failed to request power optimizer: ", optimizerEnabled + " - ", str(e))
             return {"command": self.command(), "result": "failed"}
+
+
+    def executeUI(self, **kwargs):
+        connectorID = 1
+
+        socket = kwargs.get('socket')
+        optimizerEnabled = "ON"
+
+        print("Requesting power optimizer: ", optimizerEnabled)
+
+        if optimizerEnabled.lower() == "on":
+            value = "true"
+        elif optimizerEnabled.lower() == "off":
+            value = "false"
+        else:
+            print('Second argument must be "on" or "off"')
+            return {"command": self.command(), "result": "failed"}
+
+        powerOptimizerRequest = {
+            "chargePoints": [{
+                "connectorId": connectorID,
+                "programs": [{
+                    "key": "Charger.EVC.Program.PowerOptimizer",
+                    "value": value
+                }],
+            }]
+        }
+
+        try:
+            socket.send(json.dumps(powerOptimizerRequest).encode())
+            print("Power optimizer is requested: connectorID {}".format(str(connectorID)))
+            return {"command": self.command(), "result": "successful"}
+
+        except Exception as e:
+            print("Failed to request power optimizer: ", optimizerEnabled + " - ", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+    def setupUi(self):
+        pass

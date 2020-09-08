@@ -50,3 +50,22 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Master reconfiguration is successfully requested")
         return {"command": self.command(), "result": "successful"}
+
+    def executeUI(self, **kwargs):
+        socket = kwargs.get('socket')
+        print("Requesting master reconfigure")
+
+        reconfigureRequest = {
+            "chargePoints": [{"connectorId": 0, "command": [{"key": "Charger.EVC.Command.MasterReconfigure"}]}]}
+        try:
+            socket.send(json.dumps(reconfigureRequest).encode())
+
+        except Exception as e:
+            print("Failed to send reconfiguration request", str(e))
+            return {"command": self.command(), "result": "failed"}
+
+        print("Master reconfiguration is successfully requested")
+        return {"command": self.command(), "result": "successful"}
+
+    def setupUi(self):
+        pass

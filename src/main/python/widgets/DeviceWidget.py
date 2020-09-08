@@ -80,7 +80,6 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		mainLayout.addWidget(self.__iconLabel)
 		mainLayout.addWidget(detailWidget)
 
-
 	def initSignalsAndSlots(self):
 		pass
 
