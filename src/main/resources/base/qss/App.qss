@@ -118,8 +118,7 @@ QTabWidget::pane {
 QTabWidget::pane {
 	border-width: 0px;
 	border: 0px;
-		border-top: 1px solid rgb(50, 50, 50);
-
+    border-top: 1px solid rgb(50, 50, 50);
 }
 
 QTabWidget QTabBar {

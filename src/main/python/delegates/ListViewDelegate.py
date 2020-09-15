@@ -14,10 +14,11 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		self.__rightMargin = 5
 		self.__spacing = 5
 
-		self.__oddColor = QtGui.QColor(166, 166, 166)
-		self.__evenColor = QtGui.QColor(191, 191, 191)
+		self.__secondaryColor = QtGui.QColor(166, 166, 166)
+		self.__primaryColor = QtGui.QColor(200, 200, 200)
 		self.__textColor = QtGui.QColor(64, 64, 64)
 		self.__connectedTextColor = QtGui.QColor(40, 144, 229)
+		self.__connectedItemColor = QtGui.QColor(222, 222, 222)
 
 		appCore = ApplicationCore.getInstance()
 		self.__iconEVC = QtGui.QPixmap(appCore.getIcon('evc_device.png'))
@@ -53,18 +54,20 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		if deviceType == DeviceTypes.EVC:
 			deviceStatus = device.status()
 
-		isEvenNr = True if (row % 2) == 0 else False
-
+		# isEvenNr = True if (row % 2) == 0 else False
 		if option.state & QtWidgets.QStyle.State_MouseOver:
-			painter.fillRect(rectangle, self.__evenColor.lighter(120)) if isEvenNr else painter.fillRect(rectangle, self.__evenColor.lighter(120))
+			painter.fillRect(rectangle, self.__primaryColor.lighter(120))
 		elif option.state & QtWidgets.QStyle.State_Selected:
 			print("selected olduk hanıım")
 
 		elif option.state & QtWidgets.QStyle.State_Sunken:
 			print("sunken olduk hanıım")
 
+		elif isDeviceConnected:
+			painter.fillRect(rectangle, self.__connectedItemColor)
+
 		else:
-			painter.fillRect(rectangle, self.__evenColor) if isEvenNr else painter.fillRect(rectangle, self.__oddColor)
+			painter.fillRect(rectangle, self.__primaryColor)
 
 		iconRect = QtCore.QRect(option.rect.topLeft() + QtCore.QPoint(self.marginLeft(), self.marginTop()), QtCore.QPoint(option.rect.height() - self.__bottomMargin - self.__topMargin, option.rect.y() + option.rect.height() - self.__bottomMargin))
 		connectionRect = QtCore.QRect(QtCore.QPoint(option.rect.width() - option.rect.height() / 5 * 3 - self.marginRight(), option.rect.y() + option.rect.height() / 5), QtCore.QPoint(option.rect.width() - self.marginRight(), option.rect.y() + option.rect.height() - option.rect.height() / 5))
@@ -118,6 +121,7 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		if isDeviceConnected:
 			painter.drawPixmap(connectionRect, self.__iconConnected)
 
+
 		painter.restore()
 
 	def sizeHint(self, option, index):
@@ -163,7 +167,7 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		return self.__spacing
 
 	def setPrimaryBackgroundColor(self, color):
-		self.__evenColor = color
+		self.__primaryColor = color
 
 	def setSecondaryBackgroundColor(self, color):
-		self.__oddColor = color
+		self.__secondaryColor = color

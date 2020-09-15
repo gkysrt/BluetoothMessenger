@@ -3,7 +3,8 @@ from PySide2 import QtWidgets, QtCore
 from utility.PluginReader import PluginReader
 from BaseCommand import BaseCommand
 from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, FreeChargeCommand, InterfaceSettCommand, \
-    InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, ResetRfidCommand
+    InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, ResetRfidCommand, AvailableCurrent, \
+    CachedSessionCommand, FirmwareUpdateCommand, LockableCableCommand, PlugAndChargeCommand
 
 
 class CommandPanelWidget(QtWidgets.QLabel):

@@ -1,6 +1,6 @@
 import json
 import BaseCommand
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtGui
 
 
 class Plugin(BaseCommand.BaseCommand):
@@ -19,21 +19,26 @@ class Plugin(BaseCommand.BaseCommand):
     qss = """
         QLineEdit
         {
-            border: 1px solid rgb(64, 64, 64);
             color:rgb(64, 64, 64);
             border-radius: 2px;
-            background-color = rgb(92, 92, 92);
+            background-color: rgb(222, 222, 222);
             margin-left: 8px;
         }
         QLineEdit:focus
         {
             border: 1px solid rgb(40, 144, 229);
+            background-color: rgb(222, 222, 222);
             color: rgb(40, 144, 229);
+        }
+        QLineEdit:disabled
+        {
+            border: 1px solid rgb(64, 64, 64);
+            background-color: rgb(166, 166, 166);
         }
         QComboBox
         {
             border: none;
-            background-color: rgb(128, 128, 128);
+            background-color: rgb(191, 191, 191);
         }
     """
 
@@ -146,8 +151,24 @@ class Plugin(BaseCommand.BaseCommand):
         socket = kwargs.get('socket')
         connectorID = 1
 
-        delayTime = 0
-        timeUnit = "minute"
+        hours, minutes, seconds = 0, 0, 0
+
+        hoursText = self.__hours.text()
+        minutesText = self.__minutes.text()
+        secondsText = self.__seconds.text()
+
+        if hoursText:
+            hours = int(hoursText)
+
+        if minutesText:
+            minutes = int(self.__minutes.text())
+
+        if secondsText:
+            seconds = int(self.__seconds.text())
+
+        # timeUnit is minute
+        delayTime = hours * 60 + minutes + int(seconds/60)
+
         delayChargeRequest = None
 
         if delayEnabled.lower() == "on":
@@ -190,25 +211,63 @@ class Plugin(BaseCommand.BaseCommand):
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
 
-        textEditWidget = QtWidgets.QWidget(self)
-        textEditLayout = QtWidgets.QHBoxLayout(textEditWidget)
+        infoTextLabel = QtWidgets.QLabel(self)
+        infoTextLabel.setText("Delay Charge command is used to schedule EVC for next charge")
+        infoTextLabel.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
+        containerWidget = QtWidgets.QWidget(self)
+        containerLayout = QtWidgets.QHBoxLayout(containerWidget)
+
+        textEditWidget = QtWidgets.QWidget(containerWidget)
+        textEditLayout = QtWidgets.QVBoxLayout(textEditWidget)
+
+        hourWidget = QtWidgets.QWidget(textEditWidget)
+        hourLayout = QtWidgets.QHBoxLayout(hourWidget)
+        hourTextLabel = QtWidgets.QLabel(hourWidget)
+        hourTextLabel.setText("Hour:")
+        hourTextLabel.setFixedWidth(60)
         self.__hours = QtWidgets.QLineEdit(textEditWidget)
         self.__hours.setPlaceholderText("Hour")
+        self.__hours.setValidator(QtGui.QIntValidator(0, 100))
+        hourLayout.addWidget(hourTextLabel)
+        hourLayout.addWidget(self.__hours)
+
+        minuteWidget = QtWidgets.QWidget(textEditWidget)
+        minuteLayout = QtWidgets.QHBoxLayout(minuteWidget)
+        minuteTextLabel = QtWidgets.QLabel(minuteWidget)
+        minuteTextLabel.setText("Minute:")
+        minuteTextLabel.setFixedWidth(60)
         self.__minutes = QtWidgets.QLineEdit(textEditWidget)
         self.__minutes.setPlaceholderText("Minute")
+        self.__minutes.setValidator(QtGui.QIntValidator(0, 60000))
+        minuteLayout.addWidget(minuteTextLabel)
+        minuteLayout.addWidget(self.__minutes)
+
+        secondWidget = QtWidgets.QWidget(textEditWidget)
+        secondLayout = QtWidgets.QHBoxLayout(secondWidget)
+        secondTextLabel = QtWidgets.QLabel(secondWidget)
+        secondTextLabel.setText("Second:")
+        secondTextLabel.setFixedWidth(60)
         self.__seconds = QtWidgets.QLineEdit(textEditWidget)
         self.__seconds.setPlaceholderText("Second")
+        self.__seconds.setValidator(QtGui.QIntValidator(0, 360000))
+        secondLayout.addWidget(secondTextLabel)
+        secondLayout.addWidget(self.__seconds)
+
+        textEditLayout.addWidget(hourWidget)
+        textEditLayout.addWidget(minuteWidget)
+        textEditLayout.addWidget(secondWidget)
 
         self.__onOffComboBox = QtWidgets.QComboBox(self)
         self.__onOffComboBox.addItem("On")
         self.__onOffComboBox.addItem("Off")
+        self.__onOffComboBox.setFixedWidth(200)
 
-        textEditLayout.addWidget(self.__hours)
-        textEditLayout.addWidget(self.__minutes)
-        textEditLayout.addWidget(self.__seconds)
+        containerLayout.addWidget(self.__onOffComboBox)
+        containerLayout.addWidget(textEditWidget)
 
-        layout.addWidget(textEditWidget)
+        layout.addWidget(infoTextLabel)
+        layout.addWidget(containerWidget)
 
     def initSignalsAndSlots(self):
         self.__onOffComboBox.currentTextChanged.connect(self.onComboBoxTextChange)

@@ -6,7 +6,7 @@ from models.Enum import DeviceTypes
 class ListModel(QtCore.QAbstractListModel):
 	def __init__(self,  adapter = None, parent = None):
 		super().__init__(parent)
-		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:FD:4D:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), PhoneDevice.PhoneDevice("iPhone", "41:AF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False)]
+		self.__deviceList = [EVCDevice.EVCDevice("am337x-evmsk", "CC:3F:48:FD:4D:77", True, "ok"), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), PhoneDevice.PhoneDevice("iPhone", "41:AF:D5:S2:TT:44", False), HeadphoneDevice.HeadphoneDevice("Beats JB", "X4:SF:AD:14:2G:WZ", False), LaptopDevice.LaptopDevice("Lenovo Laptop", "SG:LV:4L:X3:ZV:67", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False), BaseDevice.BaseDevice("Unnamed", "BF:4C:F3:F1:DF:55", False)]
 		self.__adapter = adapter
 
 	def rowCount(self, index):

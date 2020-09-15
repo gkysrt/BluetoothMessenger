@@ -252,9 +252,12 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onExecuteRequest(self, commandObject):
 		print(commandObject)
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.keys())
+			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.chargePoints())
 
 	def onCommandThreadSuccess(self, returnValue):
+		if not returnValue:
+			return
+
 		if returnValue.get('command') == 'scan':
 			self.__listHeader.setScanButtonEnabled(True)
 

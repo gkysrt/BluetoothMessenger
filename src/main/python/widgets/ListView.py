@@ -7,6 +7,7 @@ class ListView(QtWidgets.QListView):
 		self.initSignalsAndSlots()
 		self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 		self.setMouseTracking(True)
+		self.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
 
 	def initSignalsAndSlots(self):
 		self.customContextMenuRequested.connect(self.onContextMenuRequest)

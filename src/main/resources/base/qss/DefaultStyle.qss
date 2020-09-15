@@ -9,12 +9,12 @@ QWidget
 QLabel
 {
     color:rgb(64, 64, 64);
-    background-color: rgb(166, 166, 166);
+    background-color: rgb(200, 200, 200);
 }
 
 QListView
 {
-    background-color: #696969;
+    background-color: rgb(181, 181, 181);
 }
 /*
 QDialog[preferences = "true"] QDialogButtonBox QPushButton{
@@ -37,7 +37,7 @@ QToolTip
 }
 
 QPushButton{
-    background-color:rgb(191, 191, 191);
+    background-color:rgb(181, 181, 181);
     height:26px;
     color:rgb(64, 64, 64);
     border-radius: 13px;
@@ -53,8 +53,12 @@ QPushButton:pressed{
     background-color: rgb(150, 150, 150);
 }
 
+QPushButton:disabled{
+    background-color: rgb(140, 140, 140);
+}
+
 QPushButton[listHeader = "true"] {
-    background-color:rgb(191, 191, 191);
+    background-color:rgb(181, 181, 181);
     color:rgb(64, 64, 64);
     border-radius: 20px;
     outline:none;
@@ -66,6 +70,10 @@ QPushButton[listHeader = "true"]:hover{
 
 QPushButton[listHeader = "true"]:pressed{
     background-color: rgb(150, 150, 150);
+}
+
+QPushButton[listHeader = "true"]:disabled{
+    background-color: rgb(140, 140, 140);
 }
 
 QTabWidget
@@ -81,7 +89,7 @@ QTabWidget
 
 QTabWidget QWidget
 {
-    background-color: rgb(229, 229, 229);
+    background-color: rgb(222, 222, 222);
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
 }
@@ -99,7 +107,7 @@ QTabWidget::pane QWidget {
 }
 
 QTabWidget QTabBar {
-    background-color: rgb(166, 166, 166);
+    background-color: rgb(200, 200, 200);
     border: 0px solid rgb(50, 50, 50);
     outline:none;
 
@@ -123,9 +131,9 @@ QTabWidget QTabBar::tab:selected {
     margin-top:1px;
 
 	color: rgb(40, 144, 229);
-	background-color:rgb(229, 229, 229);
+	background-color:rgb(222, 222, 222);
 	border: 0px;
-	border-top: 1px solid rgb(40, 144, 229);
+	/* border-top: 1px solid rgb(40, 144, 229); */
     width: 150px;
     height: 25px;
 }
@@ -133,7 +141,7 @@ QTabWidget QTabBar::tab:selected {
 QTabWidget QTabBar::tab:hover:!selected {
 	color: rgb(64, 64, 64);
 	background-color:rgb(210, 210, 210);
-	border-top: 1px solid rgb(128, 128, 128);
+	/* border-top: 1px solid rgb(128, 128, 128); */
 	width: 150px;
     height: 25px;
 }
@@ -152,16 +160,16 @@ QLineEdit
     margin-left: 8px;
 }
 
-QComboBox {
-    background-color: red;
-}
-
 /*
 QTabWidget QPushButton[cornerbutton= "true"]:hover:!pressed
 {
     min-width: 28px;
     min-height: 28px;
 	background-color: rgb(80, 75, 75);
+
+QComboBox {
+    background-color: red;
+}
 
 }
 QTabWidget QPushButton[cornerbutton= "true"]:pressed
@@ -173,6 +181,108 @@ QTabWidget QPushButton[cornerbutton= "true"]:pressed
 }
 */
 
+QScrollBar:vertical {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+	width: 6px;
+}
 
+QScrollBar::handle:vertical {
+	min-height: 16px;
+	border: 0px;
+	background-color: rgb(155, 155, 155);
+	border-radius: 3px;
+
+}
+QScrollBar::handle:vertical:hover {
+    background-color: rgb(140, 140, 140);
+}
+
+QScrollBar::handle:vertical:pressed {
+    background-color: rgb(40, 144, 229);
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: rgb(140, 140, 140);
+}
+
+QScrollBar::handle:horizontal:pressed {
+    background-color: rgb(40, 144, 229);
+}
+
+QScrollBar::add-line:vertical {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+    height: 1px;
+    subcontrol-position: add;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+    height: 1px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:vertical{
+	width: 24px;
+	height: 24px;
+}
+
+QScrollBar::down-arrow:vertical{
+	width: 24px;
+	height: 24px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+QScrollBar:horizontal {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+	height: 6px;
+}
+
+QScrollBar::handle:horizontal {
+	min-width: 16px;
+	border: 0px;
+	background-color: rgb(120, 120, 120);
+	border-radius: 3px;
+
+}
+
+QScrollBar::add-line:horizontal {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+    width: 1px;
+    subcontrol-position: add;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+	/*border-left: 3px solid rgb(0, 200, 150);*/
+	background-color: transparent;
+    width: 1px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:horizontal{
+
+	width: 24px;
+	height: 24px;
+}
+
+QScrollBar::down-arrow:horizontal{
+	width: 24px;
+	height: 24px;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+	background: none;
+}
 
 

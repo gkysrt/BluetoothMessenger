@@ -28,6 +28,7 @@ class ListHeaderWidget(QtWidgets.QLabel):
 		self.__scanButton.setProperty('listHeader', True)
 		self.__scanButton.setIconSize(QtCore.QSize(30, 30))
 		self.__scanButton.setToolTip("Scan")
+		self.__scanButton.setCursor(QtCore.Qt.PointingHandCursor)
 
 		self.__disconnectButton = QtWidgets.QPushButton(self)
 		self.__disconnectButton.setIcon(QtGui.QIcon(appCore.getIcon('bluetooth_disabled.png')))
@@ -35,6 +36,7 @@ class ListHeaderWidget(QtWidgets.QLabel):
 		self.__disconnectButton.setProperty('listHeader', True)
 		self.__disconnectButton.setIconSize(QtCore.QSize(30, 30))
 		self.__disconnectButton.setToolTip("Disconnect")
+		self.__disconnectButton.setCursor(QtCore.Qt.PointingHandCursor)
 
 		rightSpacerWidget = QtWidgets.QWidget(self)
 		rightSpacerWidget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
