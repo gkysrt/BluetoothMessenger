@@ -15,6 +15,10 @@ class ListHeaderWidget(QtWidgets.QLabel):
 		self.initSignalsAndSlots()
 
 	def setupUi(self):
+		self.setStyleSheet("QLabel{background-color: rgb(181, 181, 181);"
+						   "border-bottom-right-radius: 3px;"
+						   "border-bottom: 1px solid rgb(155, 155, 155); "
+						   "border-right: 1px solid rgb(155, 155, 155);}")
 		self.setFixedHeight(48)
 		layout = QtWidgets.QHBoxLayout(self)
 		layout.setContentsMargins(8, 0, 8, 0)

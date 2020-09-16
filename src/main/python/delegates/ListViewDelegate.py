@@ -111,7 +111,6 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		# painter.drawRect(connectionRect)
 		# painter.drawRect(nameRect)
 		# painter.drawRect(macRect)
-		# painter.drawLine(QtCore.QPoint(0, option.rect.height() - 1 + option.rect.y()), QtCore.QPoint(option.rect.width(), option.rect.height() - 1 + option.rect.y()))
 
 		painter.setFont(self.__nameFont)
 		painter.drawText(nameRect, 0, fontMetrics.elidedText(deviceName, QtCore.Qt.ElideRight, nameRect.width()))
@@ -121,6 +120,10 @@ class ListViewDelegate(QtWidgets.QStyledItemDelegate):
 		if isDeviceConnected:
 			painter.drawPixmap(connectionRect, self.__iconConnected)
 
+		shouldDrawLine = False
+		if shouldDrawLine:
+			painter.setPen(QtGui.QColor(155, 155, 155))
+			painter.drawLine(QtCore.QPoint(option.rect.width()/6, option.rect.height() - 1 + option.rect.y()), QtCore.QPoint(option.rect.width()*5/6, option.rect.height() - 1 + option.rect.y()))
 
 		painter.restore()
 

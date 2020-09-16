@@ -250,9 +250,8 @@ class MainWindow(QtWidgets.QMainWindow):
 			self.__commandThread.start(self.__disconnectCmd.executeUI, socket = self.__socket)
 
 	def onExecuteRequest(self, commandObject):
-		print(commandObject)
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.chargePoints())
+			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.chargePoints(), connector = self.__deviceWidget.selectedConnector())
 
 	def onCommandThreadSuccess(self, returnValue):
 		if not returnValue:

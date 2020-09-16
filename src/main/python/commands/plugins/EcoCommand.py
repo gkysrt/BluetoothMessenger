@@ -1,14 +1,49 @@
 import json
 import BaseCommand
+from PySide2 import QtWidgets, QtGui
 
 
 class Plugin(BaseCommand.BaseCommand):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
+        self.__onOffComboBox = None
+        self.__startTime = None
+        self.__endTime = None
         super().__init__(parent)
+
+        self.initSignalsAndSlots()
 
     __options = ("-h", "-s", "-e", "-c", "--start", "--end", "--connector", "--help")
     __cmd = "eco-charge"
     __name = "Eco Charge"
+    qss = """
+            QLineEdit
+            {
+                color:rgb(64, 64, 64);
+                border-radius: 2px;
+                background-color: rgb(222, 222, 222);
+                margin-left: 8px;
+            }
+            QLineEdit:focus
+            {
+                border: 1px solid rgb(40, 144, 229);
+                background-color: rgb(240, 240, 240);
+                color: rgb(40, 144, 229);
+            }
+            QLineEdit:disabled
+            {
+                border: 1px solid rgb(64, 64, 64);
+                background-color: rgb(166, 166, 166);
+            }
+            QComboBox
+            {
+                border: none;
+                background-color: rgb(200, 200, 200);
+            }
+            QComboBox::down-arrow
+            {
+
+            }
+        """
 
     @classmethod
     def options(cls):
@@ -151,4 +186,64 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
     def setupUi(self):
-        pass
+        self.setStyleSheet(self.qss)
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
+
+        infoTextLabel = QtWidgets.QLabel(self)
+        infoTextLabel.setText("Eco Charge command is used to charge EV between given time interval")
+        infoTextLabel.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+
+        containerWidget = QtWidgets.QWidget(self)
+        containerLayout = QtWidgets.QHBoxLayout(containerWidget)
+
+        textEditWidget = QtWidgets.QWidget(containerWidget)
+        textEditLayout = QtWidgets.QVBoxLayout(textEditWidget)
+
+        startTimeWidget = QtWidgets.QWidget(textEditWidget)
+        startTimeLayout = QtWidgets.QHBoxLayout(startTimeWidget)
+        startTimeTextLabel = QtWidgets.QLabel(startTimeWidget)
+        startTimeTextLabel.setText("Start Time:")
+        startTimeTextLabel.setFixedWidth(80)
+        self.__startTime = QtWidgets.QLineEdit(textEditWidget)
+        self.__startTime.setPlaceholderText("Epoch Time")
+        self.__startTime.setValidator(QtGui.QIntValidator(0, 2147483647))
+        startTimeLayout.addWidget(startTimeTextLabel)
+        startTimeLayout.addWidget(self.__startTime)
+
+        endTimeWidget = QtWidgets.QWidget(textEditWidget)
+        endTimeLayout = QtWidgets.QHBoxLayout(endTimeWidget)
+        endTimeTextLabel = QtWidgets.QLabel(endTimeWidget)
+        endTimeTextLabel.setText("End Time:")
+        endTimeTextLabel.setFixedWidth(80)
+        self.__endTime = QtWidgets.QLineEdit(textEditWidget)
+        self.__endTime.setPlaceholderText("Epoch Time")
+        self.__endTime.setValidator(QtGui.QIntValidator(0, 2147483647))
+        endTimeLayout.addWidget(endTimeTextLabel)
+        endTimeLayout.addWidget(self.__endTime)
+
+        textEditLayout.addWidget(startTimeWidget)
+        textEditLayout.addWidget(endTimeWidget)
+
+        self.__onOffComboBox = QtWidgets.QComboBox(self)
+        self.__onOffComboBox.addItem("On")
+        self.__onOffComboBox.addItem("Off")
+        self.__onOffComboBox.setFixedWidth(200)
+
+        containerLayout.addWidget(self.__onOffComboBox)
+        containerLayout.addWidget(textEditWidget)
+
+        layout.addWidget(infoTextLabel)
+        layout.addWidget(containerWidget)
+
+    def initSignalsAndSlots(self):
+        self.__onOffComboBox.currentTextChanged.connect(self.onComboBoxTextChange)
+
+    def onComboBoxTextChange(self, text):
+        if text.upper() == "ON":
+            self.__startTime.setEnabled(True)
+            self.__endTime.setEnabled(True)
+
+        else:
+            self.__startTime.setEnabled(False)
+            self.__endTime.setEnabled(False)

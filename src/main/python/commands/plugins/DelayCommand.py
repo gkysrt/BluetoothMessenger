@@ -27,7 +27,7 @@ class Plugin(BaseCommand.BaseCommand):
         QLineEdit:focus
         {
             border: 1px solid rgb(40, 144, 229);
-            background-color: rgb(222, 222, 222);
+            background-color: rgb(240, 240, 240);
             color: rgb(40, 144, 229);
         }
         QLineEdit:disabled
@@ -38,7 +38,11 @@ class Plugin(BaseCommand.BaseCommand):
         QComboBox
         {
             border: none;
-            background-color: rgb(191, 191, 191);
+            background-color: rgb(200, 200, 200);
+        }
+        QComboBox::down-arrow
+        {
+            
         }
     """
 
@@ -149,8 +153,7 @@ class Plugin(BaseCommand.BaseCommand):
     def executeUI(self, **kwargs):
         delayEnabled = self.__onOffComboBox.currentText()
         socket = kwargs.get('socket')
-        connectorID = 1
-
+        connectorID = kwargs.get('connector', 1)
         hours, minutes, seconds = 0, 0, 0
 
         hoursText = self.__hours.text()

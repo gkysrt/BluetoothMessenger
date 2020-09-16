@@ -1,7 +1,7 @@
 from PySide2 import QtWidgets, QtCore
 from observer import BaseObserver
-import json
 from models.Enum import EVCStatus
+import ApplicationCore
 
 
 class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
@@ -12,6 +12,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		self.__macLabel = None
 		self.__statusLabel = None
 		self.__durationLabel = None
+		self.__connectorComboBox = None
 
 		self.setupUi()
 		self.initSignalsAndSlots()
@@ -19,13 +20,18 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 	def setupUi(self):
 		headerWidth = 110
 
+		appContext = ApplicationCore.ApplicationCore.getInstance()
+
 		self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 		self.setMaximumHeight(200)
 		mainLayout = QtWidgets.QHBoxLayout(self)
+
 		self.__iconLabel = QtWidgets.QLabel(self)
 		self.__iconLabel.setAlignment(QtCore.Qt.AlignCenter)
-		self.__iconLabel.setText("ICON HERE")
-		self.__iconLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		# self.__iconLabel.setText("ICON HERE")
+		# self.__iconLabel.setStyleSheet("border: 1px solid rgb(64, 64, 64);")
+		self.__iconLabel.setPixmap(appContext.getIcon("evc_device.png"))
+		self.__iconLabel.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
 
 		detailWidget = QtWidgets.QWidget(self)
 		detailLayout = QtWidgets.QVBoxLayout(detailWidget)
@@ -77,8 +83,32 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		detailLayout.addWidget(statusContainerWidget)
 		detailLayout.addWidget(durationContainerWidget)
 
+		detailWidget2 = QtWidgets.QWidget(self)
+		detailLayout2 = QtWidgets.QVBoxLayout(detailWidget2)
+		detailLayout2.setContentsMargins(0, 0, 0, 0)
+
+		connectorContainerWidget = QtWidgets.QWidget(detailWidget2)
+		connectorContainerLayout = QtWidgets.QHBoxLayout(connectorContainerWidget)
+		connectorText = QtWidgets.QLabel(connectorContainerWidget)
+		connectorText.setText("Connectors")
+		connectorText.setStyleSheet("font: bold;")
+		connectorText.setFixedWidth(headerWidth)
+		self.__connectorComboBox = QtWidgets.QComboBox(connectorContainerWidget)
+		self.__connectorComboBox.addItem("1")
+		self.__connectorComboBox.addItem("2")
+		connectorContainerLayout.addWidget(connectorText)
+		connectorContainerLayout.addWidget(self.__connectorComboBox)
+
+		# TODO: To be deleted
+		spacer = QtWidgets.QWidget(detailWidget2)
+		spacer.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
+
+		detailLayout2.addWidget(connectorContainerWidget)
+		detailLayout2.addWidget(spacer)
+
 		mainLayout.addWidget(self.__iconLabel)
 		mainLayout.addWidget(detailWidget)
+		mainLayout.addWidget(detailWidget2)
 
 	def initSignalsAndSlots(self):
 		pass
@@ -123,3 +153,6 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		value = kwargs.get('value')
 		if key == EVCStatus.CURRENT_CHARGE_SESSION.value:
 			self.setDuration(value.get('duration'))
+
+	def selectedConnector(self):
+		return int(self.__connectorComboBox.currentText())

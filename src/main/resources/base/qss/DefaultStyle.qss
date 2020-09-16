@@ -15,6 +15,8 @@ QLabel
 QListView
 {
     background-color: rgb(181, 181, 181);
+    border-right: 0px solid rgb(155, 155, 155);
+    border-top-right-radius: 3px;
 }
 /*
 QDialog[preferences = "true"] QDialogButtonBox QPushButton{
@@ -37,7 +39,7 @@ QToolTip
 }
 
 QPushButton{
-    background-color:rgb(181, 181, 181);
+    background-color:rgb(222, 222, 222);
     height:26px;
     color:rgb(64, 64, 64);
     border-radius: 13px;
@@ -46,11 +48,11 @@ QPushButton{
 }
 
 QPushButton:hover{
-    background-color: rgb(229, 229, 229);
+    background-color: rgb(240, 240, 240);
 }
 
 QPushButton:pressed{
-    background-color: rgb(150, 150, 150);
+    background-color: rgb(170, 170, 170);
 }
 
 QPushButton:disabled{
@@ -58,18 +60,18 @@ QPushButton:disabled{
 }
 
 QPushButton[listHeader = "true"] {
-    background-color:rgb(181, 181, 181);
+    background-color:rgb(200, 200, 200);
     color:rgb(64, 64, 64);
     border-radius: 20px;
     outline:none;
 }
 
 QPushButton[listHeader = "true"]:hover{
-    background-color: rgb(229, 229, 229);
+    background-color: rgb(240, 240, 240);
 }
 
 QPushButton[listHeader = "true"]:pressed{
-    background-color: rgb(150, 150, 150);
+    background-color: rgb(170, 170, 170);
 }
 
 QPushButton[listHeader = "true"]:disabled{
@@ -160,17 +162,18 @@ QLineEdit
     margin-left: 8px;
 }
 
+QComboBox
+{
+    background-color: rgb(222, 222, 222);
+}
+
+
 /*
 QTabWidget QPushButton[cornerbutton= "true"]:hover:!pressed
 {
     min-width: 28px;
     min-height: 28px;
 	background-color: rgb(80, 75, 75);
-
-QComboBox {
-    background-color: red;
-}
-
 }
 QTabWidget QPushButton[cornerbutton= "true"]:pressed
 {
