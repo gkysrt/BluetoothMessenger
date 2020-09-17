@@ -17,32 +17,10 @@ class Plugin(BaseCommand.BaseCommand):
     __cmd = "delay-charge"
     __name = "Delay Charge"
     qss = """
-        QLineEdit
-        {
-            color:rgb(64, 64, 64);
-            border-radius: 2px;
-            background-color: rgb(222, 222, 222);
-            margin-left: 8px;
-        }
-        QLineEdit:focus
-        {
-            border: 1px solid rgb(40, 144, 229);
-            background-color: rgb(240, 240, 240);
-            color: rgb(40, 144, 229);
-        }
-        QLineEdit:disabled
-        {
-            border: 1px solid rgb(64, 64, 64);
-            background-color: rgb(166, 166, 166);
-        }
         QComboBox
         {
             border: none;
             background-color: rgb(200, 200, 200);
-        }
-        QComboBox::down-arrow
-        {
-            
         }
     """
 

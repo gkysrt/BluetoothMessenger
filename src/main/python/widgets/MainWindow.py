@@ -1,8 +1,8 @@
 from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
-from models.Enum import EVCStatus
-from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget
+from models.Enum import EVCStatus, EVCProgram, EVCSetting, EVCError
+from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget, CommandPromptWidget
 from models import ModelFilter, ModelAdapter, Thread
 from utility import QssLoader
 from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
@@ -28,6 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__listHeader = None
 		self.__deviceWidget = None
 		self.__commandPanelWidget = None
+		self.__commandPromptWidget = None
 
 		# Response receiver & device context that's affected by received messages
 		self.__responseReceiver = None
@@ -73,6 +74,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		# Set return value as style sheet of main window
 		self.setStyleSheet(self.__qssLoader.loadQss(appCore.getQss('DefaultStyle.qss')))
 
+		self.__commandPromptWidget = CommandPromptWidget.CommandPromptWidget(self)
+
 		centralWidget = QtWidgets.QWidget(self)
 		centralLayout = QtWidgets.QHBoxLayout(centralWidget)
 		centralLayout.setSpacing(0)
@@ -103,6 +106,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		deviceWindowLayout = QtWidgets.QVBoxLayout(deviceWindow)
 		deviceWindowLayout.setSpacing(0)
 		deviceWindowLayout.setContentsMargins(0, 0, 0, 0)
+		# deviceWindowLayout.setContentsMargins(8, 8, 8, 8)
 
 		self.__deviceWidget = DeviceWidget.DeviceWidget(deviceWindow)
 
@@ -145,6 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
 		self.__listHeader.scanSignal.connect(self.onScanSignal)
 		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
+		self.__listHeader.commandPromptSignal.connect(self.onCommandPromptSignal)
 		self.__listView.clicked.connect(self.onListItemClick)
 		self.__model.rowsInserted.connect(self.onDeviceAdded)
 		self.__model.modelReset.connect(self.onDeviceModelReset)
@@ -173,6 +178,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
 
 		self.__listView.setModel(self.__model)
+
+		# Add deviceWidget object as an observer of some attributes of self.__deviceWidget
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.AUTHORIZATION.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.CHARGE_POINT.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.FIRMWARE_UPDATE.value)
@@ -187,6 +194,42 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.MAX_CURRENT.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MAX.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.POWER_OPT_MIN.value)
+
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.TIMEZONE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.LOCKABLE_CABLE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.AVAILABLE_CURRENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.POWER_OPTIMIZER.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.PLUG_AND_CHARGE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.ETHERNET.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCSetting.CELLULAR.value)
+
+		self.__deviceContext.attach(self.__deviceWidget, EVCProgram.ECO_CHARGE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCProgram.DELAY_CHARGE.value)
+
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.CONTRACTOR_WELDED.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.CONTRACTOR_RESPONSE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.INTERLOCK_LOCK.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.INTERLOCK_UNLOCK.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.PP.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.CP_DIODE.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_VOLTAGE_P1.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_VOLTAGE_P2.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_VOLTAGE_P3.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.UNDER_VOLTAGE_P1.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.UNDER_VOLTAGE_P2.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.UNDER_VOLTAGE_P3.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_CURRENT_P1.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_CURRENT_P2.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OVER_CURRENT_P3.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.RESIDUAL_CURRENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.PROTECTIVE_EARTH.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.RFID.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.INTERLOCK_PERMANENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.OCP_PERMANENT.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.LOAD_BALANCE_MODULE_1.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.LOAD_BALANCE_MODULE_2.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.LOAD_BALANCE_MODULE_3.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCError.HMI_EXTERNAL.value)
 
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
@@ -248,6 +291,9 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onDisconnectSignal(self):
 		if self.__model.connectedDevice() is not None and not self.__commandThread.isRunning():
 			self.__commandThread.start(self.__disconnectCmd.executeUI, socket = self.__socket)
+
+	def onCommandPromptSignal(self):
+		self.__commandPromptWidget.show()
 
 	def onExecuteRequest(self, commandObject):
 		if not self.__commandThread.isRunning():

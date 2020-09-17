@@ -1,11 +1,30 @@
 /* TODO: QSS File should use functions like : &getDarkThemeColor()&
 */
+
+/*
+ *  DEFINITION:
+ *      '%' symbol surrounding some special keywords will be replaced with their correspondants. e.g %ICON_PATH% will point to icons path of application.
+ *      '$' symbol can be used to invoke methods on QssLoader class. e.g $join(path1, path2, path3, ..)$
+ *  --------------------
+ *  Available Keywords:
+ *      %ICON_PATH% - Replaces %ICON_PATH% string with application's default icon path
+ *      %QSS_PATH% - Replaces %QSS_PATH% string with application's default icon path
+ *      %PLUGIN_PATH% - Replaces %PLUGIN_PATH% string with application's default icon path
+ *  --------------------
+ *  Available Functions:
+ *      $join(path1, path2, ...)$ - Joins given path and returns output
+ */
+
 QWidget
 {
     font-family: "Muli Light";
     border: 0px;
 }
 
+QWidget[commandPrompt="true"]{
+    background-color: rgb(140, 140, 140);
+    color: rgb(222, 222, 222);
+}
 QLabel
 {
     color:rgb(64, 64, 64);
@@ -159,15 +178,54 @@ QLineEdit
     border: 1px solid rgb(64, 64, 64);
     color:rgb(64, 64, 64);
     border-radius: 2px;
+    background-color: rgb(222, 222, 222);
     margin-left: 8px;
+}
+QLineEdit:focus
+{
+    border: 1px solid rgb(40, 144, 229);
+    background-color: rgb(240, 240, 240);
+    color: rgb(40, 144, 229);
+}
+QLineEdit:disabled
+{
+    border: 1px solid rgb(64, 64, 64);
+    background-color: rgb(166, 166, 166);
 }
 
 QComboBox
 {
+    color: rgb(64, 64, 64);
     background-color: rgb(222, 222, 222);
+    border-radius: 10px;
+    padding-left: 12px;
+    text-align: center;
 }
 
+QComboBox::drop-down
+{
+  /*  subcontrol-origin: padding;
+    subcontrol-position: top right;*/
+    width: 15px;
+    border-left-width: 0px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+    padding-right: 6px;
+    image: url($join(%ICON_PATH%, combobox_down_arrow.png)$);
+}
 
+QComboBox::item
+{
+
+}
+/*
+QComboBox::item:selected
+{
+
+}
+*/
 /*
 QTabWidget QPushButton[cornerbutton= "true"]:hover:!pressed
 {

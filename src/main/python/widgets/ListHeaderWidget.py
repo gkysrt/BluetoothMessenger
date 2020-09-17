@@ -5,6 +5,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 class ListHeaderWidget(QtWidgets.QLabel):
 	scanSignal = QtCore.Signal()
 	disconnectSignal = QtCore.Signal()
+	commandPromptSignal = QtCore.Signal()
 
 	def __init__(self, parent=None):
 		super().__init__(parent)
@@ -42,19 +43,32 @@ class ListHeaderWidget(QtWidgets.QLabel):
 		self.__disconnectButton.setToolTip("Disconnect")
 		self.__disconnectButton.setCursor(QtCore.Qt.PointingHandCursor)
 
+		self.__commandPromptButton = QtWidgets.QPushButton(self)
+		self.__commandPromptButton.setIcon(QtGui.QIcon(appCore.getIcon('terminal_icon_32.png')))
+		self.__commandPromptButton.setFixedSize(40, 40)
+		self.__commandPromptButton.setProperty('listHeader', True)
+		self.__commandPromptButton.setIconSize(QtCore.QSize(24, 24))
+		self.__commandPromptButton.setToolTip("Command Prompt")
+		self.__commandPromptButton.setCursor(QtCore.Qt.PointingHandCursor)
+
 		rightSpacerWidget = QtWidgets.QWidget(self)
 		rightSpacerWidget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
 
 		layout.addWidget(self.__scanButton)
 		layout.addWidget(self.__disconnectButton)
 		layout.addWidget(rightSpacerWidget)
+		layout.addWidget(self.__commandPromptButton)
 
 	def initSignalsAndSlots(self):
 		self.__scanButton.clicked.connect(self.scanSignal.emit)
 		self.__disconnectButton.clicked.connect(self.disconnectSignal.emit)
+		self.__commandPromptButton.clicked.connect(self.commandPromptSignal.emit)
 
 	def setScanButtonEnabled(self, enabled):
 		self.__scanButton.setEnabled(bool(enabled))
 
 	def setDisconnectButtonEnabled(self, enabled):
 		self.__disconnectButton.setEnabled(bool(enabled))
+
+	def setCommandPromptButtonEnabled(self, enabled):
+		self.__commandPromptButton.setEnabled(bool(enabled))
