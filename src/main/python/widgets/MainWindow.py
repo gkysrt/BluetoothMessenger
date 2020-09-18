@@ -323,12 +323,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
 				if connectedDevice:
 					index = self.__model.indexFromData(connectedDevice)
+					# Update model's connected device
 					self.__model.setData(index, ('isConnected', True), QtCore.Qt.EditRole)
+					# Set deviceWidget attributes with connected device attributes
+					self.__deviceWidget.setName(connectedDevice.name())
+					self.__deviceWidget.setMac(connectedDevice.mac())
+					self.__deviceWidget.setChargePoints(self.__deviceContext.chargePoints())
 
 				self.__responseReceiver.setSocket(self.__socket.dup())
 				if not self.__responseReceiver.isRunning():
 					self.__deviceContext.reset()
 					self.__responseReceiver.start()
+
 			self.__listView.repaint()
 
 		if returnValue.get('command') == 'disconnect' and returnValue.get('result') == 'successful':
@@ -350,6 +356,10 @@ class MainWindow(QtWidgets.QMainWindow):
 	def onListItemClick(self, index):
 		if not self.__commandThread.isRunning():
 			device = self.__model.dataFromIndex(index)
+
+			if self.__model.connectedDevice():
+				self.__commandThread.start(self.__disconnectCmd.executeUI, socket=self.__socket)
+
 			if not device.isConnected():
 				self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)
 

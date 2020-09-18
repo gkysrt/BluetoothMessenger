@@ -90,8 +90,8 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		durationContainerLayout.addWidget(self.__durationLabel)
 
 		self.__durationLabel.setText("-")
-		self.setMac("CC:3F:48:FD:4D:77")
-		self.setName("am337x-evmsk")
+		self.setMac("-")
+		self.setName("-")
 		self.setDeviceStatus("-")
 		self.setAuthStatus("-")
 
@@ -113,8 +113,8 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		connectorText.setFixedWidth(headerWidth)
 		self.__connectorComboBox = QtWidgets.QComboBox(connectorContainerWidget)
 		self.__connectorComboBox.setCursor(QtCore.Qt.PointingHandCursor)
-		self.__connectorComboBox.addItem("1")
-		self.__connectorComboBox.addItem("2")
+		# self.__connectorComboBox.addItem("1")
+		# self.__connectorComboBox.addItem("2")
 		connectorContainerLayout.addWidget(connectorText)
 		connectorContainerLayout.addWidget(self.__connectorComboBox)
 
@@ -164,6 +164,10 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 			durationString = "{} minutes".format(str(minute))
 
 		self.__durationLabel.setText(durationString)
+
+	def setChargePoints(self, chargePoints):
+		for chargePoint in chargePoints:
+			self.__connectorComboBox.addItem(str(chargePoint))
 
 	def resizeEvent(self, event):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
