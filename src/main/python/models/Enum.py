@@ -62,3 +62,9 @@ class EVCError(Enum):
     LOAD_BALANCE_MODULE_2 = "Charger.EVC.Error.LoadBalanceModule2"
     LOAD_BALANCE_MODULE_3 = "Charger.EVC.Error.LoadBalanceModule3"
     HMI_EXTERNAL = "Charger.EVC.Error.HmiExternal"
+
+
+class EVCOptions(Enum):
+    ECO_CHARGE_START_TIME = "Charger.EVC.Option.EcoChargeStartTime"
+    ECO_CHARGE_STOP_TIME = "Charger.EVC.Option.EcoChargeStopTime"
+    DELAY_CHARGE_TIME = "Charger.EVC.Option.DelayChargeTime"

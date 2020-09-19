@@ -1,7 +1,7 @@
 from ApplicationCore import ApplicationCore
 from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
-from models.Enum import EVCStatus, EVCProgram, EVCSetting, EVCError
+from models.Enum import EVCStatus, EVCProgram, EVCSetting, EVCError, EVCOptions
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget, CommandPromptWidget
 from models import ModelFilter, ModelAdapter, Thread
 from utility import QssLoader
@@ -231,6 +231,10 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__deviceContext.attach(self.__deviceWidget, EVCError.LOAD_BALANCE_MODULE_3.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCError.HMI_EXTERNAL.value)
 
+		self.__deviceContext.attach(self.__deviceWidget, EVCOptions.DELAY_CHARGE_TIME.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCOptions.ECO_CHARGE_START_TIME.value)
+		self.__deviceContext.attach(self.__deviceWidget, EVCOptions.ECO_CHARGE_STOP_TIME.value)
+
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 		self.__socket.setblocking(True)
@@ -329,6 +333,7 @@ class MainWindow(QtWidgets.QMainWindow):
 					self.__deviceWidget.setName(connectedDevice.name())
 					self.__deviceWidget.setMac(connectedDevice.mac())
 					self.__deviceWidget.setChargePoints(self.__deviceContext.chargePoints())
+					self.__deviceContext.setDuration(0)
 
 				self.__responseReceiver.setSocket(self.__socket.dup())
 				if not self.__responseReceiver.isRunning():
