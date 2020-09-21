@@ -48,7 +48,8 @@ class CommandParser(object):
             if extension == ".py":
                 module = importlib.import_module(self.COMMANDS_PACKAGE + ".%s" % name)
                 instance = self.pluginInstance(module)
-                self.__cmdDict[instance.command()] = instance
+                if instance:
+                    self.__cmdDict[instance.command()] = instance
 
     # Creates instance of plugin class inside given module
     def pluginInstance(self, module):
@@ -59,8 +60,9 @@ class CommandParser(object):
 
         except AttributeError as e:
             print("Error creating exporter plugin objects, {} - {}".format(module, str(e)))
+            return None
 
-        if issubclass(pluginClass, BaseCommand.BaseCommand):
+        if pluginClass and issubclass(pluginClass, BaseCommand.BaseCommand):
             pluginInstance = pluginClass()
             return pluginInstance
 

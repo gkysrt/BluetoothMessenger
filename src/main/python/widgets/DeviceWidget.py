@@ -311,4 +311,8 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 			pass
 
 	def selectedConnector(self):
-		return int(self.__connectorComboBox.currentText())
+		connectorNo = None
+		connectorText = self.__connectorComboBox.currentText()
+		if connectorText:
+			connectorNo = int(connectorText)
+		return connectorNo

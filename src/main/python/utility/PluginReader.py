@@ -16,14 +16,15 @@ class PluginReader(object):
 	@staticmethod
 	def loadPlugins(pluginPackage, pluginDirectory, pluginParentClass = None):
 		pluginDict = {}
-
+		print("pluginParentClass", pluginParentClass)
 		# Search for files that may be plug-ins on given directory
 		for file in os.listdir(pluginDirectory):
 			name, extension = os.path.splitext(file)
 			if extension == ".py":
 				module = importlib.import_module(pluginPackage + ".%s" % name)
 				instance = PluginReader.pluginInstance(module, pluginParentClass)
-				pluginDict[instance.command()] = instance
+				if instance:
+					pluginDict[instance.command()] = instance
 
 		return pluginDict
 
@@ -47,8 +48,9 @@ class PluginReader(object):
 
 		except AttributeError as e:
 			print("Error creating exporter plugin objects, {} - {}".format(module, str(e)))
+			return None
 
-		if issubclass(pluginClass, pluginParentClass):
+		if pluginClass and pluginParentClass and issubclass(pluginClass, pluginParentClass):
 			pluginInstance = pluginClass()
 			return pluginInstance
 

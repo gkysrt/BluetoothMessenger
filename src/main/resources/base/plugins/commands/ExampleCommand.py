@@ -3,11 +3,11 @@
 # it'll be added and evaluated as an argument
 # You can uncomment below lines to add an ExampleCommand
 
-# from PySide2 import QtWidgets
-# from BaseCommand import BaseCommand
+# from PySide2 import QtWidgets, QtCore
+# import BaseCommand
 #
 #
-# class ExampleCommand(BaseCommand.BaseCommand):
+# class Plugin(BaseCommand.BaseCommand):
 # 	__options = ("-h", "-c")
 # 	__cmd = "example-command"
 # 	__name = "Example Command"
@@ -70,7 +70,13 @@
 # 		use the given space freely. If setupUi() is not overridden and reimplemented, command will not be added
 # 		to UI
 # 		"""
-# 		pass
+# 		layout = QtWidgets.QVBoxLayout(self)
+#
+# 		textLabel = QtWidgets.QLabel(self)
+# 		textLabel.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+# 		textLabel.setText("Example Command")
+# 		textLabel.setAlignment(QtCore.Qt.AlignCenter)
+# 		layout.addWidget(textLabel)
 #
 # 	def execute(self, argList, **kwargs):
 # 		"""
@@ -97,5 +103,5 @@
 # 		e.g
 # 			return {"command": self.command(), "result": "successful", "devices": list(nearbyDevices)}
 # 		"""
-# 		QtWidgets.QMessageBox.information(self, "Example Command", "You executed example command!", QtWidgets.QMessageBox.Ok)
+# 		QtWidgets.QMessageBox.information(self.parent(), "Example Command", "You executed example command!", QtWidgets.QMessageBox.Ok)
 # 		return {'command': self.command(), 'result': 'successful'}

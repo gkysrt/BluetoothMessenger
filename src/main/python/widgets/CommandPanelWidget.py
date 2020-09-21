@@ -27,7 +27,7 @@ class CommandPanelWidget(QtWidgets.QLabel):
         appCore = ApplicationCore.getInstance()
         externalCommandPluginsDict = {}
         if appCore.isFrozen():
-            externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'))
+            externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'), BaseCommand)
 
         internalCommandPluginsDict = {}
         for subclass in BaseCommand.__subclasses__():
