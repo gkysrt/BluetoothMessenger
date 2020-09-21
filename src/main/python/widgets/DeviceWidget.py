@@ -242,7 +242,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		value = kwargs.get('value')
 
 		if key == EVCStatus.AUTHORIZATION.value:
-			print("Auth status values:", value)
+			self.setAuthStatus(str(value).replace(EVCStatus.AUTHORIZATION.value + ".", ""))
 
 		elif key == EVCStatus.CHARGE_POINT.value:
 			pass

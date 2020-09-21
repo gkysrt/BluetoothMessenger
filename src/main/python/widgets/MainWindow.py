@@ -333,7 +333,7 @@ class MainWindow(QtWidgets.QMainWindow):
 					self.__deviceWidget.setName(connectedDevice.name())
 					self.__deviceWidget.setMac(connectedDevice.mac())
 					self.__deviceWidget.setChargePoints(self.__deviceContext.chargePoints())
-					self.__deviceContext.setDuration(0)
+					self.__deviceWidget.setDuration(0)
 
 				self.__responseReceiver.setSocket(self.__socket.dup())
 				if not self.__responseReceiver.isRunning():
@@ -378,7 +378,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		# Handling the response from device
 		# TODO: An adapter that transforms incoming messages from device?
 		jsonResponse = json.loads(response)
-		chargePoints = jsonResponse.get('chargePoints')
+		chargePoints = jsonResponse.get('chargePoints', [])
 		for chargePoint in chargePoints:
 			connectorID = chargePoint.get('connectorId')
 			self.__deviceContext.addChargePoint(connectorID)
