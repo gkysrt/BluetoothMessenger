@@ -70,6 +70,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		authorizationStatusHeaderLabel = QtWidgets.QLabel("Auth. Status")
 		authorizationStatusHeaderLabel.setStyleSheet("font: bold;")
 		authorizationStatusHeaderLabel.setFixedWidth(headerWidth)
+		authorizationStatusHeaderLabel.setToolTip("Authentication Status")
 		self.__authorizationStatusLabel = QtWidgets.QLabel(authorizationStatusContainerWidget)
 		authorizationStatusContainerLayout.addWidget(authorizationStatusHeaderLabel)
 		authorizationStatusContainerLayout.addWidget(self.__authorizationStatusLabel)
@@ -77,9 +78,10 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		statusContainerWidget = QtWidgets.QWidget(detailWidget)
 		statusContainerLayout = QtWidgets.QHBoxLayout(statusContainerWidget)
 		statusContainerLayout.setContentsMargins(0, 0, 0, 0)
-		statusHeaderLabel = QtWidgets.QLabel("Device Status")
+		statusHeaderLabel = QtWidgets.QLabel("CP Status")
 		statusHeaderLabel.setStyleSheet("font: bold;")
 		statusHeaderLabel.setFixedWidth(headerWidth)
+		statusHeaderLabel.setToolTip("Charge Point Status")
 		self.__statusLabel = QtWidgets.QLabel(statusContainerWidget)
 		statusContainerLayout.addWidget(statusHeaderLabel)
 		statusContainerLayout.addWidget(self.__statusLabel)
@@ -171,7 +173,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		self.__durationLabel.setText("-")
 		self.setMac("-")
 		self.setName("-")
-		self.setDeviceStatus("-")
+		self.setCPStatus("-")
 		self.setAuthStatus("-")
 		self.setEcoChargeStatus("-")
 		self.setDelayChargeStatus("-")
@@ -190,9 +192,9 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 	def setMac(self, mac):
 		self.__macLabel.setText("{}".format(str(mac)))
 
-	def setDeviceStatus(self, status):
+	def setCPStatus(self, status):
 		# TODO: Should take enum and change status indicators and text accordingly
-		self.__statusLabel.setText("{}".format(str(status)))
+		self.__statusLabel.setText("{}".format(str(status).replace(EVCStatus.CHARGE_POINT.value + ".", "")))
 
 	def setAuthStatus(self, status):
 		# TODO: Should take enum and change status indicators and text accordingly
@@ -245,7 +247,7 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 			self.setAuthStatus(str(value).replace(EVCStatus.AUTHORIZATION.value + ".", ""))
 
 		elif key == EVCStatus.CHARGE_POINT.value:
-			pass
+			self.setCPStatus(value)
 
 		elif key == EVCStatus.FIRMWARE_UPDATE.value:
 			pass
