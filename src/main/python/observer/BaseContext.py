@@ -1,9 +1,10 @@
 from observer.BaseObserver import BaseObserver
+from PySide2 import QtCore
 
 
-class BaseContext(object):
-    def __init__(self):
-        super().__init__()
+class BaseContext(QtCore.QObject):
+    def __init__(self, parent = None):
+        super().__init__(parent)
         """
         The Subject interface declares a set of methods for managing subscribers.
         """

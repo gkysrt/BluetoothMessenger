@@ -138,48 +138,54 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
     def executeUI(self, **kwargs):
-        onOffArgument = "on"
+        onOffArgument = self.__onOffComboBox.currentText()
         startTime = 0
         endTime = 0
-        connectorID = 1
+        if self.__startTime.text():
+            startTime = int(self.__startTime.text())
+
+        if self.__endTime.text():
+            endTime = int(self.__endTime.text())
+
+        connectorID = kwargs.get('connector', 1)
 
         socket = kwargs.get('socket')
         print("Requesting echo charge: ", onOffArgument)
 
         try:
-            if onOffArgument.lower() == "off":
-                ecoChargeRequest = {"chargePoints": [{"connectorId": connectorID, "programs": [
-                    {"key": "Charger.EVC.Program.EcoCharge", "value": "false"}]}]}
-                socket.send(json.dumps(ecoChargeRequest).encode())
-                return {"command": self.command(), "result": "successful"}
-
-            elif onOffArgument.lower() == "on":
-                ecoChargeRequest = {
-                    "chargePoints": [{
-                        "connectorId": connectorID,
-                        "programs": [{
-                            "key": "Charger.EVC.Program.EcoCharge",
-                            "value": "true"
-                        }],
-                        "options": [
-                            {
-                                "key": "Charger.EVC.Option.EcoChargeStartTime",
-                                "value": startTime
-                            },
-                            {
-                                "key": "Charger.EVC.Option.EcoChargeStopTime",
-                                "value": endTime
-                            }]
-                    }]
-                }
-                socket.send(json.dumps(ecoChargeRequest).encode())
-                print("Eco charge is successfully requested {} with start time: {} end time: {}".format(onOffArgument,
-                                                                                                        str(startTime),
-                                                                                                        str(endTime)))
-                return {"command": self.command(), "result": "successful"}
+            if onOffArgument.lower() == "on":
+                value = "true"
+            elif onOffArgument.lower() == "off":
+                value = "false"
+                endTime = 0
+                startTime = 0
 
             else:
-                raise Exception("Second argument should be on/off")
+                return {"command": self.command(), "result": "failed"}
+
+            ecoChargeRequest = {
+                "chargePoints": [{
+                    "connectorId": connectorID,
+                    "programs": [{
+                        "key": "Charger.EVC.Program.EcoCharge",
+                        "value": value
+                    }],
+                    "options": [
+                        {
+                            "key": "Charger.EVC.Option.EcoChargeStartTime",
+                            "value": startTime
+                        },
+                        {
+                            "key": "Charger.EVC.Option.EcoChargeStopTime",
+                            "value": endTime
+                        }]
+                }]
+            }
+            socket.send(json.dumps(ecoChargeRequest).encode())
+            print("Eco charge is successfully requested {} with start time: {} end time: {}".format(onOffArgument,
+                                                                                                    str(startTime),
+                                                                                                    str(endTime)))
+            return {"command": self.command(), "result": "successful"}
 
         except Exception as e:
             print("Failed to send eco-charge request: %s" % str(e))
@@ -202,22 +208,24 @@ class Plugin(BaseCommand.BaseCommand):
 
         startTimeWidget = QtWidgets.QWidget(textEditWidget)
         startTimeLayout = QtWidgets.QHBoxLayout(startTimeWidget)
+        startTimeLayout.setContentsMargins(0, 0, 0, 0)
         startTimeTextLabel = QtWidgets.QLabel(startTimeWidget)
         startTimeTextLabel.setText("Start Time:")
         startTimeTextLabel.setFixedWidth(80)
         self.__startTime = QtWidgets.QLineEdit(textEditWidget)
-        self.__startTime.setPlaceholderText("Epoch Time")
+        self.__startTime.setPlaceholderText("Minutes starting from 00:00")
         self.__startTime.setValidator(QtGui.QIntValidator(0, 2147483647))
         startTimeLayout.addWidget(startTimeTextLabel)
         startTimeLayout.addWidget(self.__startTime)
 
         endTimeWidget = QtWidgets.QWidget(textEditWidget)
         endTimeLayout = QtWidgets.QHBoxLayout(endTimeWidget)
+        endTimeLayout.setContentsMargins(0, 0, 0, 0)
         endTimeTextLabel = QtWidgets.QLabel(endTimeWidget)
         endTimeTextLabel.setText("End Time:")
         endTimeTextLabel.setFixedWidth(80)
         self.__endTime = QtWidgets.QLineEdit(textEditWidget)
-        self.__endTime.setPlaceholderText("Epoch Time")
+        self.__endTime.setPlaceholderText("Minutes starting from 00:00")
         self.__endTime.setValidator(QtGui.QIntValidator(0, 2147483647))
         endTimeLayout.addWidget(endTimeTextLabel)
         endTimeLayout.addWidget(self.__endTime)

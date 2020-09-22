@@ -150,33 +150,28 @@ class Plugin(BaseCommand.BaseCommand):
         # timeUnit is minute
         delayTime = hours * 60 + minutes + int(seconds/60)
 
-        delayChargeRequest = None
-
         if delayEnabled.lower() == "on":
-            # TODO: What is step, unit, min, max scale
-            delayChargeRequest = {"chargePoints":
-                [{
-                    "connectorId": connectorID,
-                    "programs":
-                        [{"key": "Charger.EVC.Program.DelayCharge",
-                          "value": "true"}],
-                    "options": [{
-                        "key": "Charger.EVC.Option.DelayChargeTime",
-                        "valueType": "Integer",
-                        "value": delayTime}
-                    ]}
-                ]}
+            value = "true"
 
         elif delayEnabled.lower() == "off":
-            delayChargeRequest = {
-                "chargePoints": [{
-                    "connectorId": connectorID,
-                    "programs": [{
-                        "key": "Charger.EVC.Program.DelayCharge",
-                        "value": "false"
-                    }]
-                }]
-            }
+            value = "false"
+            delayTime = 0
+
+        else:
+            return {"command": self.command(), "result": "failed"}
+
+        delayChargeRequest = {"chargePoints":
+            [{
+                "connectorId": connectorID,
+                "programs":
+                    [{"key": "Charger.EVC.Program.DelayCharge",
+                      "value": value}],
+                "options": [{
+                    "key": "Charger.EVC.Option.DelayChargeTime",
+                    "valueType": "Integer",
+                    "value": delayTime}
+                ]}
+            ]}
 
         try:
             socket.send(json.dumps(delayChargeRequest).encode())
@@ -204,6 +199,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         hourWidget = QtWidgets.QWidget(textEditWidget)
         hourLayout = QtWidgets.QHBoxLayout(hourWidget)
+        hourLayout.setContentsMargins(0, 0, 0, 0)
         hourTextLabel = QtWidgets.QLabel(hourWidget)
         hourTextLabel.setText("Hour:")
         hourTextLabel.setFixedWidth(60)
@@ -215,6 +211,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         minuteWidget = QtWidgets.QWidget(textEditWidget)
         minuteLayout = QtWidgets.QHBoxLayout(minuteWidget)
+        minuteLayout.setContentsMargins(0, 0, 0, 0)
         minuteTextLabel = QtWidgets.QLabel(minuteWidget)
         minuteTextLabel.setText("Minute:")
         minuteTextLabel.setFixedWidth(60)
@@ -226,6 +223,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         secondWidget = QtWidgets.QWidget(textEditWidget)
         secondLayout = QtWidgets.QHBoxLayout(secondWidget)
+        secondLayout.setContentsMargins(0, 0, 0, 0)
         secondTextLabel = QtWidgets.QLabel(secondWidget)
         secondTextLabel.setText("Second:")
         secondTextLabel.setFixedWidth(60)

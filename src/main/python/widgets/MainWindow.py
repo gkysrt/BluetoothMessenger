@@ -143,17 +143,25 @@ class MainWindow(QtWidgets.QMainWindow):
 	def initSignalsAndSlots(self):
 		self.__commandThread.successful.connect(self.onCommandThreadSuccess)
 		self.__commandThread.failed.connect(self.onCommandThreadFail)
+
 		self.__commandPanelWidget.executeRequested.connect(self.onExecuteRequest)
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
+
 		self.__listHeader.scanSignal.connect(self.onScanSignal)
 		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
 		self.__listHeader.commandPromptSignal.connect(self.onCommandPromptSignal)
+
 		self.__listView.clicked.connect(self.onListItemClick)
+
 		self.__model.rowsInserted.connect(self.onDeviceAdded)
 		self.__model.modelReset.connect(self.onDeviceModelReset)
+
 		self.__responseReceiver.responseReceived.connect(self.onResponseReceived)
+
+		self.__deviceContext.chargePointAdded.emit(lambda cp: self.onConnectorAddedContext)
+		self.__deviceContext.chargePointRemoved.emit(lambda cp: self.onConnectorRemovedContext)
 
 	def initialize(self):
 		self.initBluetoothSocket()
@@ -263,6 +271,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		super().keyPressEvent(event)
 
+	def resizeEvent(self, event):
+		self.__deviceWidget.setFixedHeight(event.size().height() / 5 * 2)
+		self.__commandPanelWidget.setFixedHeight(event.size().height() / 2)
+		super().resizeEvent(event)
+
 	def closeEvent(self, event):
 		if self.__responseReceiver.isRunning():
 			self.__responseReceiver.stop()
@@ -332,7 +345,6 @@ class MainWindow(QtWidgets.QMainWindow):
 					# Set deviceWidget attributes with connected device attributes
 					self.__deviceWidget.setName(connectedDevice.name())
 					self.__deviceWidget.setMac(connectedDevice.mac())
-					self.__deviceWidget.setChargePoints(self.__deviceContext.chargePoints())
 					self.__deviceWidget.setDuration(0)
 
 				self.__responseReceiver.setSocket(self.__socket.dup())
@@ -373,6 +385,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def onDeviceModelReset(self):
 		self.__serviceLoaderThread.start(self.loadServices, first=0, last=self.__model.rowCount(QtCore.QModelIndex()))
+
+	def onConnectorAddedContext(self, connector):
+		print("SIGNALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
+		self.__deviceWidget.addConnector(connector)
+
+	def onConnectorRemovedContext(self, connector):
+		self.__deviceWidget.removeConnector(connector)
 
 	def onResponseReceived(self, response):
 		# Handling the response from device

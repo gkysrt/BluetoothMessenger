@@ -170,14 +170,14 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		mainLayout.addWidget(detailWidget)
 		mainLayout.addWidget(detailWidget2)
 
-		self.__durationLabel.setText("-")
-		self.setMac("-")
-		self.setName("-")
-		self.setCPStatus("-")
-		self.setAuthStatus("-")
-		self.setEcoChargeStatus("-")
-		self.setDelayChargeStatus("-")
-		self.setErrorStatus("-")
+		self.__durationLabel.setText(None)
+		self.setMac(None)
+		self.setName(None)
+		self.setCPStatus(None)
+		self.setAuthStatus(None)
+		self.setEcoChargeStatus(None)
+		self.setDelayChargeStatus(None)
+		self.setErrorStatus(None)
 		self.setInternetConnectionStatus("-")
 
 	def initSignalsAndSlots(self):
@@ -187,34 +187,76 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		self.__iconLabel.setPixmap(icon)
 
 	def setName(self, name):
-		self.__nameLabel.setText("{}".format(str(name)))
+		if name is None:
+			text = "-"
+		else:
+			text = name
+		self.__nameLabel.setText("{}".format(str(text)))
 
 	def setMac(self, mac):
-		self.__macLabel.setText("{}".format(str(mac)))
+		if mac is None:
+			text = "-"
+		else:
+			text = mac
+		self.__macLabel.setText("{}".format(str(text)))
 
 	def setCPStatus(self, status):
 		# TODO: Should take enum and change status indicators and text accordingly
-		self.__statusLabel.setText("{}".format(str(status).replace(EVCStatus.CHARGE_POINT.value + ".", "")))
+		if status is None:
+			text = "-"
+		else:
+			text = str(status).replace(EVCStatus.CHARGE_POINT.value + ".", "")
+		self.__statusLabel.setText("{}".format(text))
 
 	def setAuthStatus(self, status):
 		# TODO: Should take enum and change status indicators and text accordingly
-		self.__authorizationStatusLabel.setText("{}".format(str(status)))
+		text = status
+		if status is None:
+			text = "-"
+		else:
+			text = status
+		self.__authorizationStatusLabel.setText("{}".format(str(text)))
 
 	def setEcoChargeStatus(self, status):
-		self.__ecoChargeLabel.setText(str(status))
+		if status:
+			text = "Enabled"
+		elif status is None:
+			text = "-"
+		else:
+			text = "Disabled"
+
+		self.__ecoChargeLabel.setText(text)
 
 	def setDelayChargeStatus(self, status):
-		self.__delayChargeLabel.setText(str(status))
+		if status:
+			text = "Enabled"
+		elif status is None:
+			text = "-"
+		else:
+			text = "Disabled"
+
+		self.__delayChargeLabel.setText(text)
 
 	def setErrorStatus(self, status):
-		self.__errorLabel.setText(str(status))
+		if status is None:
+			text = "-"
+		else:
+			text = status
+		self.__errorLabel.setText(str(text))
 
 	def setInternetConnectionStatus(self, status):
-		self.__internetConnectionLabel.setText(str(status))
+		if status is None:
+			text = "-"
+		else:
+			text = status
+		self.__internetConnectionLabel.setText(str(text))
 
 	def setDuration(self, time):
-		# TODO: Duration calculation here
 		# Incoming time is in minutes
+		if time is None:
+			self.__durationLabel.setText("-")
+			return
+
 		day = int(time / (60 * 24))
 		hour = int(time / 60) % 24
 		minute = time % 60
@@ -228,12 +270,22 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 
 		self.__durationLabel.setText(durationString)
 
-	def setChargePoints(self, chargePoints):
-		for chargePoint in chargePoints:
-			self.__connectorComboBox.addItem(str(chargePoint))
+	# Sets connectors of connector combobox
+	def setConnectors(self, connectors):
+		for connector in connectors:
+			self.__connectorComboBox.addItem(str(connector))
+
+	# Adds a connector to connector combobox
+	def addConnector(self, connector):
+		print("connector eklendi bee", connector)
+		self.__connectorComboBox.addItem(str(connector))
+
+	def removeConnector(self, connector):
+		pass
 
 	def resizeEvent(self, event):
 		self.__iconLabel.setMaximumWidth(self.__iconLabel.height())
+		self.__iconLabel.setMinimumWidth(self.width() / 8)
 		super().resizeEvent(event)
 
 	# DeviceWidget class is an observer. This class receives related updates from DeviceContext class
@@ -241,10 +293,10 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 		print("DeviceWidget received info on evc state: {}".format(str(kwargs)))
 		connectorID = kwargs.get('connectorID')
 		key = kwargs.get('key')
-		value = kwargs.get('value')
+		value = kwargs.get('value', None)
 
 		if key == EVCStatus.AUTHORIZATION.value:
-			self.setAuthStatus(str(value).replace(EVCStatus.AUTHORIZATION.value + ".", ""))
+			self.setAuthStatus(value)
 
 		elif key == EVCStatus.CHARGE_POINT.value:
 			self.setCPStatus(value)
@@ -286,10 +338,13 @@ class DeviceWidget(QtWidgets.QLabel, BaseObserver.BaseObserver):
 			pass
 
 		elif key == EVCProgram.ECO_CHARGE.value:
-			pass
+			print("eco charge", value)
+			self.setEcoChargeStatus(value)
 
 		elif key == EVCProgram.DELAY_CHARGE.value:
-			pass
+			print("delcharge", value)
+
+			self.setDelayChargeStatus(value)
 
 		elif key == EVCSetting.TIMEZONE.value:
 			pass

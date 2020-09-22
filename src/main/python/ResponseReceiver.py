@@ -1,5 +1,6 @@
 from PySide2 import QtCore
 from models import Thread
+import time
 
 
 class ResponseReceiver(QtCore.QObject):
@@ -35,7 +36,7 @@ class ResponseReceiver(QtCore.QObject):
 
     def start(self):
         if self.__socket:
-            self.__socket.setblocking(False)
+            self.__socket.setblocking(True)
             self.__workerThread.start(self.receive, looping=True)
 
     def stop(self):

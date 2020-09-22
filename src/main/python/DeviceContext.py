@@ -1,9 +1,13 @@
 from observer import BaseContext
 from observer.BaseObserver import BaseObserver
-from models.Enum import EVCStatus
+from PySide2 import QtCore
 
 
 class DeviceContext(BaseContext.BaseContext):
+
+    chargePointAdded = QtCore.Signal(int)
+    chargePointRemoved = QtCore.Signal(int)
+
     def __init__(self):
         super().__init__()
         # observerDict is a dict of observers. Observers register here using connectorID's and state keys
@@ -85,9 +89,11 @@ class DeviceContext(BaseContext.BaseContext):
 
     def addChargePoint(self, connectorID, data = None):
         self.__state[connectorID] = {}
+        self.chargePointAdded.emit(connectorID)
 
     def removeChargePoint(self, connectorID):
         self.__state.pop(connectorID)
+        self.chargePointRemoved.emit(connectorID)
 
     def chargePointState(self, connectorID):
         return self.__state.get(connectorID)
