@@ -180,7 +180,6 @@ QLineEdit
     color:rgb(64, 64, 64);
     border-radius: 2px;
     background-color: rgb(222, 222, 222);
-    margin-left: 8px;
 }
 QLineEdit:focus
 {
@@ -193,6 +192,28 @@ QLineEdit:disabled
     border: 1px solid rgb(64, 64, 64);
     background-color: rgb(166, 166, 166);
 }
+
+QTextEdit
+{
+    border: 1px solid rgb(64, 64, 64);
+    color:rgb(64, 64, 64);
+    border-radius: 2px;
+    background-color: rgb(222, 222, 222);
+}
+
+QTextEdit:focus
+{
+    border: 1px solid rgb(40, 144, 229);
+    background-color: rgb(240, 240, 240);
+    color: rgb(40, 144, 229);
+}
+
+QTextEdit:disabled
+{
+    border: 1px solid rgb(64, 64, 64);
+    background-color: rgb(166, 166, 166);
+}
+
 
 QComboBox
 {

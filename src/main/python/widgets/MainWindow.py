@@ -74,7 +74,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		# Set return value as style sheet of main window
 		self.setStyleSheet(self.__qssLoader.loadQss(appCore.getQss('DefaultStyle.qss')))
 
-		self.__commandPromptWidget = CommandPromptWidget.CommandPromptWidget(self)
+		self.__commandPromptWidget = CommandPromptWidget.CommandPromptWidget(self.__model, self)
 
 		centralWidget = QtWidgets.QWidget(self)
 		centralLayout = QtWidgets.QHBoxLayout(centralWidget)

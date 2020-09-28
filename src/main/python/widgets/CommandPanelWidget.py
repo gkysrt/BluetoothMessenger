@@ -45,7 +45,7 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         self.__tabWidget = QtWidgets.QTabWidget(self)
         self.__tabWidget.setMovable(False)
-        self.__tabWidget.tabBar().setUsesScrollButtons(False)
+        self.__tabWidget.tabBar().setUsesScrollButtons(True)
 
         self.__executeButton = QtWidgets.QPushButton(self)
         self.__executeButton.setCursor(QtCore.Qt.PointingHandCursor)
