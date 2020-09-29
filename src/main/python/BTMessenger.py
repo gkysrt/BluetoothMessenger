@@ -1,5 +1,5 @@
 import sys
-import CommandParser
+from utility import CommandParser
 import bluetooth
 import ResponseReceiver
 

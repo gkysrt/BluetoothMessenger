@@ -14,29 +14,10 @@ class CommandPanelWidget(QtWidgets.QLabel):
         super().__init__(parent)
         self.__tabWidget = None
         self.__executeButton = None
+        self.__commandModel = None
 
-        self.__cmdDict = {}
-
-        # Initialize commands, plug-ins
-        self.initializeCommands()
         self.setupUi()
         self.initSignalsAndSlots()
-
-    # This method aims to initialize both external and internal commands
-    def initializeCommands(self):
-        appCore = ApplicationCore.getInstance()
-        externalCommandPluginsDict = {}
-        if appCore.isFrozen():
-            externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'), BaseCommand)
-
-        internalCommandPluginsDict = {}
-        for subclass in BaseCommand.__subclasses__():
-            # Check if internal command plugin is inside commands.plugin package
-            if subclass.__module__.startswith('commands.plugin'):
-                internalCommandPluginsDict[subclass.name()] = subclass()
-
-        internalCommandPluginsDict.update(externalCommandPluginsDict)
-        self.__cmdDict = internalCommandPluginsDict
 
     def setupUi(self):
         mainLayout = QtWidgets.QVBoxLayout(self)
@@ -51,13 +32,27 @@ class CommandPanelWidget(QtWidgets.QLabel):
         self.__executeButton.setCursor(QtCore.Qt.PointingHandCursor)
         self.__executeButton.setText("Execute")
 
-        # Setup tabs
-        for key in self.__cmdDict.keys():
-            self.__tabWidget.addTab(self.__cmdDict.get(key), key)
+        self.constructTabs()
 
         mainLayout.addWidget(titleLabel)
         mainLayout.addWidget(self.__tabWidget)
         mainLayout.addWidget(self.__executeButton)
+
+    def constructTabs(self):
+        if not self.__commandModel:
+            return
+
+        cmdDict = self.__commandModel.getCommandDict()
+        self.__tabWidget.clear()
+
+        for key in cmdDict:
+            commandWidget = cmdDict.get(key)
+            name = commandWidget.name()
+            self.__tabWidget.addTab(commandWidget, name)
+
+    def setCommandModel(self, model):
+        self.__commandModel = model
+        self.constructTabs()
 
     def initSignalsAndSlots(self):
         self.__executeButton.clicked.connect(lambda: self.executeRequested.emit(self.__tabWidget.currentWidget()))

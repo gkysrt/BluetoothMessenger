@@ -1,5 +1,6 @@
 from PySide2 import QtWidgets, QtCore, QtGui
 from widgets import CommandTextWidget
+from utility import CommandParser
 
 
 class CommandPromptWidget(QtWidgets.QWidget):
@@ -7,14 +8,18 @@ class CommandPromptWidget(QtWidgets.QWidget):
         super().__init__(parent)
         self.__commandTextEdit = None
         self.__generalTextEdit = None
-        self.__model = model
+        self.__commandModel = model
+        self.__commandParser = CommandParser.CommandParser()
         self.setupUi()
         self.initSignalsAndSlots()
 
     def setupUi(self):
+
+        self.setStyleSheet("border: 1px solid rgb(80, 80, 80); background-color: rgb(64, 64, 64);"
+                           "color: rgb(222, 222, 222); font-family: Ubuntu;")
         self.hide()
         self.setWindowFlag(QtCore.Qt.Window, True)
-        self.setMinimumSize(480, 270)
+        self.setMinimumSize(640, 360)
         self.setProperty("commandPrompt", True)
 
         layout = QtWidgets.QVBoxLayout(self)
@@ -33,8 +38,8 @@ class CommandPromptWidget(QtWidgets.QWidget):
     def initSignalsAndSlots(self):
         self.__commandTextEdit.commandEntered.connect(self.onCommandEnter)
 
-    def setModel(self, model):
-        self.__model = model
+    def setCommandModel(self, model):
+        self.__commandModel = model
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:
@@ -45,9 +50,47 @@ class CommandPromptWidget(QtWidgets.QWidget):
 
     def onCommandEnter(self, text):
         self.printText(text)
+        self.parse(text)
 
     # Prints text on terminal output window
-    def printText(self, text):
-        # TODO: Add date info to text here
-        self.__generalTextEdit.insertPlainText(text + "\n")
+    def printText(self, text, dateInfo = True):
+        if dateInfo:
+            dateString = QtCore.QDateTime.currentDateTime().toString('[hh:mm:ss] - : ')
+        else:
+            dateString = ""
+        self.__generalTextEdit.insertPlainText(dateString + text + "\n")
         self.__generalTextEdit.moveCursor(QtGui.QTextCursor.End)
+
+    # This method parses argument and executes related command with given kwargs
+    def parse(self, argumentString, **kwargs):
+        # If user typed in no specific command
+        if argumentString == "help" or argumentString == "info":
+            self.displayManual()
+            return
+
+        elif argumentString == "clear":
+            self.__generalTextEdit.clear()
+            return
+
+        elif argumentString == "":
+            return
+
+        argumentList = argumentString.split()
+
+        # First argument is always the command, rest are the arguments, options etc.
+        # Command is removed from argumentList
+        commandString = argumentList.pop(0)
+
+        if commandString in self.__commandModel.getCommands():
+            command = self.__commandModel.getCommand(commandString)
+            return command.execute(argumentList, **kwargs)
+
+        else:
+            print("Command not recognized. Type \"help\" to display manual.")
+
+    # Prints out all available commands' info
+    def displayManual(self):
+        commandObjects = [self.__commandModel.getCommand(key) for key in self.__commandModel.getCommands()]
+        for command in commandObjects:
+            self.printText(command.info(), False)
+

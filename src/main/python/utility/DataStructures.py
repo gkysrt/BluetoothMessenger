@@ -88,6 +88,7 @@ class Stack(list):
 			return item
 
 		if self.pointer() + 1 > len(self) - 1:
+			self.resetPointer()
 			return None
 
 		self.incrementPointer()

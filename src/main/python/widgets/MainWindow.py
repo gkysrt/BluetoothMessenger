@@ -3,18 +3,22 @@ from PySide2 import QtWidgets, QtCore
 from delegates import ListViewDelegate
 from models.Enum import EVCStatus, EVCProgram, EVCSetting, EVCError, EVCOptions
 from widgets import ListHeaderWidget, ListView, DeviceWidget, CommandPanelWidget, CommandPromptWidget
-from models import ModelFilter, ModelAdapter, Thread
-from utility import QssLoader
-from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand,\
+from models import ModelFilter, ModelAdapter, Thread, CommandModel
+from utility import QssLoader, PluginReader
+from commands import AuthorizeCommand, PauseCommand, ResumeCommand, StartCommand, StopCommand, ScanCommand, \
 	DisconnectCommand, ConnectCommand, ServiceCommand
 import bluetooth
 import ResponseReceiver
 import DeviceContext
 import json
+from BaseCommand import BaseCommand
+from commands.plugins import CurrLimCommand, DelayCommand, EcoCommand, FreeChargeCommand, InterfaceSettCommand, \
+	InterfaceSettCommand, MaxCurrCommand, PowerOptCommand, ReconfigureCommand, ResetRfidCommand, AvailableCurrent, \
+	CachedSessionCommand, FirmwareUpdateCommand, LockableCableCommand, PlugAndChargeCommand
 
 
 class MainWindow(QtWidgets.QMainWindow):
-	def __init__(self, parent = None):
+	def __init__(self, parent=None):
 		super().__init__(parent)
 		# Initializing variables that'll be used in MainWindow class
 
@@ -38,6 +42,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__socket = None
 		self.__model = None
 		self.__modelAdapter = None
+		self.__commandModel = None
 
 		# Threads for executing commands & loading services of scanned BT devices
 		self.__commandThread = None
@@ -55,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__disconnectCmd = None
 
 		# QSSLoader class, used to load qss
-		self.__qssLoader = QssLoader.QssLoader()		# QssLoader instantiation
+		self.__qssLoader = QssLoader.QssLoader()  # QssLoader instantiation
 
 		# Setup UI and widgets
 		self.setupUi()
@@ -63,8 +68,13 @@ class MainWindow(QtWidgets.QMainWindow):
 		# Initialize objects and start program
 		self.initialize()
 
+		# Initialize all commands and fill CommandModel
+		self.initializeCommands()
+
 		# Initialize signals and slots
 		self.initSignalsAndSlots()
+
+		self.setFocus()
 
 	def setupUi(self):
 		# Obtain app core
@@ -74,7 +84,7 @@ class MainWindow(QtWidgets.QMainWindow):
 		# Set return value as style sheet of main window
 		self.setStyleSheet(self.__qssLoader.loadQss(appCore.getQss('DefaultStyle.qss')))
 
-		self.__commandPromptWidget = CommandPromptWidget.CommandPromptWidget(self.__model, self)
+		self.__commandPromptWidget = CommandPromptWidget.CommandPromptWidget(parent=self)
 
 		centralWidget = QtWidgets.QWidget(self)
 		centralLayout = QtWidgets.QHBoxLayout(centralWidget)
@@ -131,7 +141,6 @@ class MainWindow(QtWidgets.QMainWindow):
 		buttonContainerLayout.addWidget(self.__stopChargeButton)
 
 		self.__commandPanelWidget = CommandPanelWidget.CommandPanelWidget(deviceWindow)
-		# self.__commandPanelWidget.setFixedHeight(200)
 
 		deviceWindowLayout.addWidget(self.__deviceWidget)
 		deviceWindowLayout.addWidget(buttonContainerWidget)
@@ -160,8 +169,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		self.__responseReceiver.responseReceived.connect(self.onResponseReceived)
 
-		self.__deviceContext.chargePointAdded.emit(lambda cp: self.onConnectorAddedContext)
-		self.__deviceContext.chargePointRemoved.emit(lambda cp: self.onConnectorRemovedContext)
+		self.__deviceContext.chargePointAdded.emit(self.onConnectorAddedContext)
+		self.__deviceContext.chargePointRemoved.emit(self.onConnectorRemovedContext)
 
 	def initialize(self):
 		self.initBluetoothSocket()
@@ -172,20 +181,12 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__commandThread = Thread.Thread(self)
 		self.__serviceLoaderThread = Thread.Thread(self)
 
-		self.__scanCmd = ScanCommand.Plugin()
-		self.__serviceCmd = ServiceCommand.Plugin()
-		self.__connectCmd = ConnectCommand.Plugin()
-		self.__disconnectCmd = DisconnectCommand.Plugin()
-		self.__startCmd = StartCommand.Plugin()
-		self.__authorizeCmd = AuthorizeCommand.Plugin()
-		self.__pauseCmd = PauseCommand.Plugin()
-		self.__resumeCmd = ResumeCommand.Plugin()
-		self.__stopCmd = StopCommand.Plugin()
-
 		self.__modelAdapter = ModelAdapter.ModelAdapter()
-		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent = self)
+		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent=self)
 
 		self.__listView.setModel(self.__model)
+
+		self.__commandModel = CommandModel.CommandModel(self)
 
 		# Add deviceWidget object as an observer of some attributes of self.__deviceWidget
 		self.__deviceContext.attach(self.__deviceWidget, EVCStatus.AUTHORIZATION.value)
@@ -243,6 +244,35 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__deviceContext.attach(self.__deviceWidget, EVCOptions.ECO_CHARGE_START_TIME.value)
 		self.__deviceContext.attach(self.__deviceWidget, EVCOptions.ECO_CHARGE_STOP_TIME.value)
 
+	# This method aims to initialize both external and internal commands
+	def initializeCommands(self):
+		appCore = ApplicationCore.getInstance()
+		externalCommandPluginsDict = {}
+		if appCore.isFrozen():
+			externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'), BaseCommand)
+
+		internalCommandPluginsDict = {}
+		for subclass in BaseCommand.__subclasses__():
+			# Check if internal command plugin is inside commands.plugin package
+			if subclass.__module__.startswith('commands.plugin'):
+				internalCommandPluginsDict[subclass.command()] = subclass()
+
+		internalCommandPluginsDict.update(externalCommandPluginsDict)
+		self.__commandModel.setCommands(internalCommandPluginsDict)
+
+		self.__scanCmd = ScanCommand.Plugin()
+		self.__serviceCmd = ServiceCommand.Plugin()
+		self.__connectCmd = ConnectCommand.Plugin()
+		self.__disconnectCmd = DisconnectCommand.Plugin()
+		self.__startCmd = StartCommand.Plugin()
+		self.__authorizeCmd = AuthorizeCommand.Plugin()
+		self.__pauseCmd = PauseCommand.Plugin()
+		self.__resumeCmd = ResumeCommand.Plugin()
+		self.__stopCmd = StopCommand.Plugin()
+
+		self.__commandPanelWidget.setCommandModel(self.__commandModel)
+		self.__commandPromptWidget.setCommandModel(self.__commandModel)
+
 	def initBluetoothSocket(self):
 		self.__socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 		self.__socket.setblocking(True)
@@ -269,6 +299,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		if event.key() == QtCore.Qt.Key_D:
 			self.onDisconnectSignal()
 
+		if event.key() == QtCore.Qt.Key_T:
+			self.onCommandPromptSignal()
 		super().keyPressEvent(event)
 
 	def resizeEvent(self, event):
@@ -286,19 +318,19 @@ class MainWindow(QtWidgets.QMainWindow):
 		super().closeEvent(event)
 
 	# ------------- SLOTS -------------
-	def onStopButtonClick(self, checked = False):
+	def onStopButtonClick(self, checked=False):
 		if not self.__commandThread.isRunning():
 			self.__commandThread.start(self.__stopCmd.executeUI, socket=self.__socket)
 
-	def onStartButtonClick(self, checked = False):
+	def onStartButtonClick(self, checked=False):
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(self.__startCmd.executeUI, socket = self.__socket)
+			self.__commandThread.start(self.__startCmd.executeUI, socket=self.__socket)
 			self.__commandThread.start(self.__pauseCmd.executeUI, socket=self.__socket)
 			self.__commandThread.start(self.__resumeCmd.executeUI, socket=self.__socket)
 
-	def onAuthorizeButtonClick(self, checked = False):
+	def onAuthorizeButtonClick(self, checked=False):
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(self.__authorizeCmd.executeUI, socket = self.__socket)
+			self.__commandThread.start(self.__authorizeCmd.executeUI, socket=self.__socket)
 
 	def onScanSignal(self):
 		if not self.__commandThread.isRunning():
@@ -307,14 +339,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def onDisconnectSignal(self):
 		if self.__model.connectedDevice() is not None and not self.__commandThread.isRunning():
-			self.__commandThread.start(self.__disconnectCmd.executeUI, socket = self.__socket)
+			self.__commandThread.start(self.__disconnectCmd.executeUI, socket=self.__socket)
 
 	def onCommandPromptSignal(self):
 		self.__commandPromptWidget.show()
 
 	def onExecuteRequest(self, commandObject):
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(commandObject.executeUI, socket=self.__socket, connectors=self.__deviceContext.chargePoints(), connector = self.__deviceWidget.selectedConnector())
+			self.__commandThread.start(commandObject.executeUI, socket=self.__socket,
+									   connectors=self.__deviceContext.chargePoints(),
+									   connector=self.__deviceWidget.selectedConnector())
 
 	def onCommandThreadSuccess(self, returnValue):
 		if not returnValue:
@@ -378,7 +412,8 @@ class MainWindow(QtWidgets.QMainWindow):
 				self.__commandThread.start(self.__disconnectCmd.executeUI, socket=self.__socket)
 
 			if not device.isConnected():
-				self.__commandThread.start(self.__connectCmd.executeUI, socket = self.__socket, name = device.name(), mac = device.mac(), port = 1)
+				self.__commandThread.start(self.__connectCmd.executeUI, socket=self.__socket, name=device.name(),
+										   mac=device.mac(), port=1)
 
 	def onDeviceAdded(self, parent, first, last):
 		self.__serviceLoaderThread.start(self.loadServices, first=first, last=last)
