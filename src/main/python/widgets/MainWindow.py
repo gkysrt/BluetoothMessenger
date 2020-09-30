@@ -150,42 +150,59 @@ class MainWindow(QtWidgets.QMainWindow):
 		centralLayout.addWidget(deviceWindow)
 
 	def initSignalsAndSlots(self):
+		# Whenever a command executed inside commandThread,
+		# it'll result in running onCommandThreadSuccess() or onCommandThreadFail() functions
 		self.__commandThread.successful.connect(self.onCommandThreadSuccess)
 		self.__commandThread.failed.connect(self.onCommandThreadFail)
 
+		# Commands are executed through CommandPanel's Execute button, Authorize - Start - Stop buttons and CommandPrompt
+		# They're all tied to their respective methods, all will be run inside CommandThread
 		self.__commandPanelWidget.executeRequested.connect(self.onExecuteRequest)
+		self.__commandPromptWidget.terminalCommandRequested.connect(self.onTerminalCommandRequest)
 		self.__authorizeButton.clicked.connect(self.onAuthorizeButtonClick)
 		self.__startChargeButton.clicked.connect(self.onStartButtonClick)
 		self.__stopChargeButton.clicked.connect(self.onStopButtonClick)
 
+		# ListHeader's button click signals are connected to their respective methods
 		self.__listHeader.scanSignal.connect(self.onScanSignal)
 		self.__listHeader.disconnectSignal.connect(self.onDisconnectSignal)
 		self.__listHeader.commandPromptSignal.connect(self.onCommandPromptSignal)
 
+		# ListView's item click signal is connected to onListItemClick() method.
 		self.__listView.clicked.connect(self.onListItemClick)
 
+		# Model's item inserted and model reset signals, connected to their respective functions
 		self.__model.rowsInserted.connect(self.onDeviceAdded)
 		self.__model.modelReset.connect(self.onDeviceModelReset)
 
+		# Whenever a response is received from ResponseReceiver class, onResponseReceived() method runs
 		self.__responseReceiver.responseReceived.connect(self.onResponseReceived)
 
+		# DeviceContext is an observable that holds various info on connected device.
+		# Whenever a new chargePoint info received deviceContext's signals will run their respective methods
 		self.__deviceContext.chargePointAdded.emit(self.onConnectorAddedContext)
 		self.__deviceContext.chargePointRemoved.emit(self.onConnectorRemovedContext)
 
 	def initialize(self):
+		# Start off by initializing bluetooth socket
 		self.initBluetoothSocket()
 
+		# Initialize ResponseReceiver and DeviceContext for possible connections
 		self.__responseReceiver = ResponseReceiver.ResponseReceiver()
 		self.__deviceContext = DeviceContext.DeviceContext()
 
+		# Ready CommandThread and ServiceLoader thread
 		self.__commandThread = Thread.Thread(self)
 		self.__serviceLoaderThread = Thread.Thread(self)
 
+		# Initialize ModelAdapter and hand it over to the device model
 		self.__modelAdapter = ModelAdapter.ModelAdapter()
 		self.__model = ModelFilter.ModelFilter(adapter=self.__modelAdapter, parent=self)
 
+		# Set ListView's model
 		self.__listView.setModel(self.__model)
 
+		# Initialize CommandModel that'll inhabit all scanned available commands
 		self.__commandModel = CommandModel.CommandModel(self)
 
 		# Add deviceWidget object as an observer of some attributes of self.__deviceWidget
@@ -249,7 +266,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		appCore = ApplicationCore.getInstance()
 		externalCommandPluginsDict = {}
 		if appCore.isFrozen():
-			externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'), BaseCommand)
+			externalCommandPluginsDict = PluginReader.loadPlugins('plugins.commands', appCore.getPlugin('commands'),
+																  BaseCommand)
 
 		internalCommandPluginsDict = {}
 		for subclass in BaseCommand.__subclasses__():
@@ -269,6 +287,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__pauseCmd = PauseCommand.Plugin()
 		self.__resumeCmd = ResumeCommand.Plugin()
 		self.__stopCmd = StopCommand.Plugin()
+
+		# self.__commandModel.addCommand(self.__disconnectCmd)
 
 		self.__commandPanelWidget.setCommandModel(self.__commandModel)
 		self.__commandPromptWidget.setCommandModel(self.__commandModel)
@@ -346,9 +366,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
 	def onExecuteRequest(self, commandObject):
 		if not self.__commandThread.isRunning():
-			self.__commandThread.start(commandObject.executeUI, socket=self.__socket,
+			self.__commandThread.start(commandObject.executeUI,
+									   socket=self.__socket,
 									   connectors=self.__deviceContext.chargePoints(),
 									   connector=self.__deviceWidget.selectedConnector())
+
+	def onTerminalCommandRequest(self, argList, commandObject):
+		self.__commandThread.start(commandObject.execute,
+								   argList=argList,
+								   socket=self.__socket,
+								   connectors=self.__deviceContext.chargePoints(),
+								   connector=self.__deviceWidget.selectedConnector())
 
 	def onCommandThreadSuccess(self, returnValue):
 		if not returnValue:

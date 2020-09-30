@@ -4,6 +4,8 @@ from utility import CommandParser
 
 
 class CommandPromptWidget(QtWidgets.QWidget):
+    terminalCommandRequested = QtCore.Signal(list, object)
+
     def __init__(self, model = None, parent=None):
         super().__init__(parent)
         self.__commandTextEdit = None
@@ -58,12 +60,16 @@ class CommandPromptWidget(QtWidgets.QWidget):
             dateString = QtCore.QDateTime.currentDateTime().toString('[hh:mm:ss] - : ')
         else:
             dateString = ""
-        self.__generalTextEdit.insertPlainText(dateString + text + "\n")
+        self.__generalTextEdit.insertPlainText("\n" + dateString + text + "\n")
         self.__generalTextEdit.moveCursor(QtGui.QTextCursor.End)
 
     # This method parses argument and executes related command with given kwargs
     def parse(self, argumentString, **kwargs):
         # If user typed in no specific command
+        if argumentString == 'quit' or argumentString == 'exit' or argumentString == 'close':
+            self.setHidden(True)
+            return
+
         if argumentString == "help" or argumentString == "info":
             self.displayManual()
             return
@@ -82,11 +88,10 @@ class CommandPromptWidget(QtWidgets.QWidget):
         commandString = argumentList.pop(0)
 
         if commandString in self.__commandModel.getCommands():
-            command = self.__commandModel.getCommand(commandString)
-            return command.execute(argumentList, **kwargs)
+            self.terminalCommandRequested.emit(argumentList, self.__commandModel.getCommand(commandString))
 
         else:
-            print("Command not recognized. Type \"help\" to display manual.")
+            self.printText("Command not recognized. Type \"help\" to display manual.", False)
 
     # Prints out all available commands' info
     def displayManual(self):

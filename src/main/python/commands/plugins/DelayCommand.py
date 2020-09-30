@@ -54,6 +54,9 @@ class Plugin(BaseCommand.BaseCommand):
             print(self.info())
             return {"command": self.command(), "result": "failed"}
 
+        if not argList:
+            return {"command": self.command(), "result": "failed"}
+
         delayEnabled = argList.pop(0)
 
         socket = kwargs.get('socket')
