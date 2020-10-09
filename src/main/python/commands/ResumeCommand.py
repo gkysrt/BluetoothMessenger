@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "-c", "--connector", "--help")
+    __options = ("-c", "--connector")
     __cmd = "resume-charge"
     __name = "Resume"
 
@@ -26,17 +26,12 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """resume-charge [options]: Resume charge command, used to resume a paused charging status.
             OPTIONS:
-                -h / --help : Show help
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
                 resume-charge -c 1
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
         print("Requesting resume charge")
 
@@ -76,3 +71,6 @@ class Plugin(BaseCommand.BaseCommand):
             return {"command": self.command(), "result": "failed"}
 
         return {"command": self.command(), "result": "successful"}
+
+    def isDisplayed(self):
+        return False

@@ -288,7 +288,15 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__resumeCmd = ResumeCommand.Plugin()
 		self.__stopCmd = StopCommand.Plugin()
 
-		# self.__commandModel.addCommand(self.__disconnectCmd)
+		self.__commandModel.addCommand(self.__scanCmd)
+		self.__commandModel.addCommand(self.__serviceCmd)
+		self.__commandModel.addCommand(self.__connectCmd)
+		self.__commandModel.addCommand(self.__disconnectCmd)
+		self.__commandModel.addCommand(self.__startCmd)
+		self.__commandModel.addCommand(self.__authorizeCmd)
+		self.__commandModel.addCommand(self.__pauseCmd)
+		self.__commandModel.addCommand(self.__resumeCmd)
+		self.__commandModel.addCommand(self.__stopCmd)
 
 		self.__commandPanelWidget.setCommandModel(self.__commandModel)
 		self.__commandPromptWidget.setCommandModel(self.__commandModel)
@@ -308,7 +316,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
 		print("Services are loaded for scanned devices")
 
-	# ------------- EVENT HANDLING -------------
+	# ------------- EVENT HANDLING ------------- #
+
 	def keyPressEvent(self, event):
 		if event.key() == QtCore.Qt.Key_Escape:
 			self.close()
@@ -337,7 +346,8 @@ class MainWindow(QtWidgets.QMainWindow):
 		self.__serviceLoaderThread.quit()
 		super().closeEvent(event)
 
-	# ------------- SLOTS -------------
+	# ------------- SLOTS ------------- #
+
 	def onStopButtonClick(self, checked=False):
 		if not self.__commandThread.isRunning():
 			self.__commandThread.start(self.__stopCmd.executeUI, socket=self.__socket)

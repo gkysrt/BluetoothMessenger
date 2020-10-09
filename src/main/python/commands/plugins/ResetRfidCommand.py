@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "reset-rfid"
     __name = "Reset RFID"
 
@@ -26,14 +26,10 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """reset-rfid [options]: User card reset command.
             OPTIONS:
-                -h / --help : Show help
+                -
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
         print("Requesting user card reset")
 

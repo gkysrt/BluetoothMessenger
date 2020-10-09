@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
 	def __init__(self, parent=None):
 		super().__init__(parent)
 
-	__options = ("-h", "--help", "-u", "--uuid", "-n", "--name", "-m", "--mac")
+	__options = ("-u", "--uuid", "-n", "--name", "-m", "--mac")
 	__cmd = "service"
 	__name = "Scan Service"
 
@@ -29,16 +29,11 @@ class Plugin(BaseCommand.BaseCommand):
 				-u / --uuid : UUID input for target
 				-n / --name: Name input for target
 				-m / --mac: MAC address input for target
-				-h / --help : Show help
-
 			e.g:
 				service -u 24345-691df-120g5lf -n evc04 -m 34:1G:33:12:66:00
 			"""
 
 	def execute(self, argList, **kwargs):
-		if '-h' in argList or '--help' in argList:
-			print(self.info())
-			return {"command": self.command(), "result": "failed"}
 		print("Looking for target services..")
 
 		name = None
@@ -101,3 +96,6 @@ class Plugin(BaseCommand.BaseCommand):
 			print(service)
 
 		return {"command": self.command(), "result": "successful", "services": list(serviceList)}
+
+	def isDisplayed(self):
+		return False

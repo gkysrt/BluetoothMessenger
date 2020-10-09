@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "reconfigure"
     __name = "Reconfigure"
 
@@ -26,16 +26,12 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """reconfigure [options]: Master reconfigure command, used to reconfigure.
             OPTIONS:
-                -h / --help : Show help
+                -
             e.g
                 reconfigure
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
         print("Requesting master reconfigure")
 

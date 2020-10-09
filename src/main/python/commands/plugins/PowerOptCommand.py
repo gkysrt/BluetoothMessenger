@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "power-optimizer"
     __name = "Power Optimizer"
 
@@ -26,14 +26,10 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """power-optimizer [on/off] [options]: Power optimizer command
             OPTIONS:
-                -h / --help : Show help
+                -
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         connectorID = 1
         for i in range(len(argList)):
             if "-c" == argList[i] or "--connector" == argList[i]:

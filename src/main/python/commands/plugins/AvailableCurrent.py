@@ -6,7 +6,7 @@ class Command(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "available-current"
     __name = "Available Current"
 
@@ -26,17 +26,12 @@ class Command(BaseCommand.BaseCommand):
     def info():
         return """available-current [value] [options]: Available current command, takes integer value
             OPTIONS:
-                -h / --help : Show help
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
                 available-current 7 -c 1
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         connectorID = 1
         for i in range(len(argList)):
             if "-c" == argList[i] or "--connector" == argList[i]:

@@ -8,7 +8,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "-p", "--port", "--help")
+    __options = ("-p", "--port")
     __cmd = "connect"
     __name = "Connect"
     @classmethod
@@ -28,7 +28,6 @@ class Plugin(BaseCommand.BaseCommand):
         return """connect [mac] [options]: Connect bluetooth command, second arg is mac address of target device
             OPTIONS:
                 -p / --port : Specify target port  (Default port is 1)
-                -h / --help : Show help
             e.g:
                 connect CC:D3:C1:01:9A:78 --port 1
             """
@@ -94,3 +93,6 @@ class Plugin(BaseCommand.BaseCommand):
         socket.send(json.dumps(configParamRequest).encode())
 
         return {"command": self.command(), "result": "successful", "mac": macAddress, "portNumber": portNr, "name": name}
+
+    def isDisplayed(self):
+        return False

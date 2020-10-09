@@ -6,7 +6,7 @@ class Command(BaseCommand.BaseCommand):
 	def __init__(self):
 		super().__init__()
 
-	__options = ("-h", "--help")
+	__options = ()
 	__cmd = "cached-session"
 	__name = "Cached Session"
 
@@ -26,16 +26,12 @@ class Command(BaseCommand.BaseCommand):
 	def info():
 		return """cached-session [date] [options]: Cached Session Request command, used to request a cached session. cached-session keyword is followed by a date in epoch format.
 			OPTIONS:
-				-h / --help : Show help
+				-
 			e.g:
 				cached-session 791404523
 			"""
 
 	def execute(self, argList, **kwargs):
-		if '-h' in argList or '--help' in argList:
-			print(self.info())
-			return {"command": Command.command(), "result": "failed"}
-
 		socket = kwargs.get('socket')
 		print("Requesting cached session..")
 

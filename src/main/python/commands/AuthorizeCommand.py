@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "-c", "--connector", "--help")
+    __options = ("-c", "--connector")
     __cmd = "authorize"
     __name = "Authorize"
 
@@ -26,17 +26,12 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """authorize [options]: Authorization command, used to signal the initial authorization of charging process.
             OPTIONS:
-                -h / --help : Show help
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
                 authorize --connector 1
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
         print("Requesting authorize charge")
 
@@ -73,3 +68,6 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Authorization is successfully requested: connectorID {}".format(str(connectorID)))
         return {"command": self.command(), "result": "successful"}
+
+    def isDisplayed(self):
+        return False

@@ -13,7 +13,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         self.initSignalsAndSlots()
 
-    __options = ("-h", "-c", "-s", "-m", "-h", "--second", "--minute", "--hour", "--connector", "--help")
+    __options = ("-c", "-s", "-m", "--second", "--minute", "--hour", "--connector")
     __cmd = "delay-charge"
     __name = "Delay Charge"
     qss = """
@@ -40,7 +40,6 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """delay-charge [on/off] [options]: Delay charge command, second arg on off, a delay amount should be specified
             OPTIONS:
-                -h / --help: Show help
                 -c / --connector: Connector ID (default connector ID is 1)
                 -s / --second: Delay amount in seconds
                 -m / --minute: Delay amount in minutes
@@ -50,10 +49,6 @@ class Plugin(BaseCommand.BaseCommand):
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         if not argList:
             return {"command": self.command(), "result": "failed"}
 

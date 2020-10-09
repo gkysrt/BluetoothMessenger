@@ -6,7 +6,7 @@ class Command(BaseCommand.BaseCommand):
 	def __init__(self):
 		super().__init__()
 
-	__options = ("-h", "--help")
+	__options = ()
 	__cmd = "lockable-cable"
 	__name = "Lockable Cable"
 
@@ -26,17 +26,12 @@ class Command(BaseCommand.BaseCommand):
 	def info():
 		return """lockable-cable [on/off] [options]: Lockable cable command, used with on/off arguments
 		OPTIONS:
-			-h / --help: Show help
             -c / --connector: Specify a connector ID (default connector ID is 1)
         e.g
             lockable-cable on -c 1
 		"""
 
 	def execute(self, argList, **kwargs):
-		if '-h' in argList or '--help' in argList:
-			print(self.info())
-			return {"command": self.command(), "result": "failed"}
-
 		onOffArgument = argList.pop(0)
 		connectorID = 1
 

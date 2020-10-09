@@ -7,7 +7,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "-c", "--connector", "--help")
+    __options = ("-c", "--connector")
     __cmd = "stop-charge"
     __name = "Stop"
 
@@ -27,17 +27,12 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """stop-charge [options]: Stop charge command, used to signal the end of the charging.  
             OPTIONS:
-                -h / --help : Show help
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
                 stop-charge --connector 1
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
         print("Requesting stop charge")
 
@@ -75,3 +70,6 @@ class Plugin(BaseCommand.BaseCommand):
 
         print("Stop charge is successfully requested: connectorID {}".format(str(connectorID)))
         return {"command": self.command(), "result": "successful"}
+
+    def isDisplayed(self):
+        return False

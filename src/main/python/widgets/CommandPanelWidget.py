@@ -47,8 +47,9 @@ class CommandPanelWidget(QtWidgets.QLabel):
 
         for key in cmdDict:
             commandWidget = cmdDict.get(key)
-            name = commandWidget.name()
-            self.__tabWidget.addTab(commandWidget, name)
+            if commandWidget.isDisplayed():
+                name = commandWidget.name()
+                self.__tabWidget.addTab(commandWidget, name)
 
     def setCommandModel(self, model):
         self.__commandModel = model

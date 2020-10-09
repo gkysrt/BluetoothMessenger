@@ -15,6 +15,10 @@ class CommandPromptWidget(QtWidgets.QWidget):
         self.setupUi()
         self.initSignalsAndSlots()
 
+        self.printText("Type \"help\" to display manual.", False)
+        self.printText("Type \"quit\", \"exit\" or \"close\" to close the terminal", False)
+        self.printText("Type \"clear\" to clear the terminal.", False)
+
     def setupUi(self):
 
         self.setStyleSheet("border: 1px solid rgb(80, 80, 80); background-color: rgb(64, 64, 64);"
@@ -88,13 +92,21 @@ class CommandPromptWidget(QtWidgets.QWidget):
         commandString = argumentList.pop(0)
 
         if commandString in self.__commandModel.getCommands():
-            self.terminalCommandRequested.emit(argumentList, self.__commandModel.getCommand(commandString))
+            # If help requested from command only print info text on terminal
+            if '-h' in argumentList:
+                self.printText(self.__commandModel.getCommand(commandString).info(), False)
+            # If it is an execution signal that the command is requested
+            else:
+                self.terminalCommandRequested.emit(argumentList, self.__commandModel.getCommand(commandString))
 
         else:
             self.printText("Command not recognized. Type \"help\" to display manual.", False)
 
     # Prints out all available commands' info
     def displayManual(self):
+        self.printText("Type \"help\" to display manual.", False)
+        self.printText("Type \"quit\", \"exit\" or \"close\" to close the terminal", False)
+        self.printText("Type \"clear\" to clear the terminal.", False)
         commandObjects = [self.__commandModel.getCommand(key) for key in self.__commandModel.getCommands()]
         for command in commandObjects:
             self.printText(command.info(), False)

@@ -6,7 +6,7 @@ class Command(BaseCommand.BaseCommand):
     def __init__(self):
         super().__init__()
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "firmware-update"
     __name = "Firmware Update"
 
@@ -26,16 +26,12 @@ class Command(BaseCommand.BaseCommand):
     def info():
         return """firmware-update [options]: Firmware update command, used to signal the start firmware update.
             OPTIONS:
-                -h / --help : Show help
+                -
             e.g
                 firmware-update
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
 
         print("Requesting firmware update")

@@ -6,7 +6,7 @@ class Plugin(BaseCommand.BaseCommand):
 	def __init__(self, parent=None):
 		super().__init__(parent)
 
-	__options = ("-h", "--help", "-f", "--flush", "-d", "--duration", "-c", "--class", "-h", "--help")
+	__options = ("-n", "--name", "-f", "--flush", "-d", "--duration", "-c", "--class")
 	__cmd = "scan"
 	__name = "Scan"
 
@@ -30,18 +30,12 @@ class Plugin(BaseCommand.BaseCommand):
 			-f / --flush: Flush cache
 			-d / --duration: Timeout duration (Default 8sec)
 			-c / --class : Show lookup class
-			-h / --help : Show help
 		e.g:
 			scan -d 4 -f -n -c
 			"""
 
 	def execute(self, argList, **kwargs):
-		if '-h' in argList or '--help' in argList:
-			print(self.info())
-			return {"command": self.command(), "result": "failed"}
-
 		print("Starting bluetooth scan..")
-
 		namesEnabled = False
 		flushCache = False
 		lookupClass = False
@@ -92,3 +86,7 @@ class Plugin(BaseCommand.BaseCommand):
 
 		print("Found {} devices.".format(len(nearbyDevices)))
 		return {"command": self.command(), "result": "successful", "devices": list(nearbyDevices)}
+
+
+	def isDisplayed(self):
+		return False

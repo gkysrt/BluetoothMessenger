@@ -7,7 +7,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "-c", "--connector", "--help")
+    __options = ("-c", "--connector")
     __cmd = "interface-setting"
     __name = "Interface Setting"
     qss = """
@@ -56,7 +56,6 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """interface-setting [options]: Used to configure interface settings
             OPTIONS:
-                -h / --help : Show help
                 -c / --connector: Specify a connector ID (default connector ID is 1)
                 -t / --timezone: Specify a timezone setting
                 -l / --lockablecable: Turn lockable cable "on" or "off"
@@ -67,10 +66,6 @@ class Plugin(BaseCommand.BaseCommand):
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         socket = kwargs.get('socket')
 
         connectorID = 1

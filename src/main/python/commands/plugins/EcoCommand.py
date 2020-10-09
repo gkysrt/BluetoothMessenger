@@ -12,7 +12,7 @@ class Plugin(BaseCommand.BaseCommand):
 
         self.initSignalsAndSlots()
 
-    __options = ("-h", "-s", "-e", "-c", "--start", "--end", "--connector", "--help")
+    __options = ("-s", "-e", "-c", "--start", "--end", "--connector")
     __cmd = "eco-charge"
     __name = "Eco Charge"
     qss = """
@@ -61,7 +61,6 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """eco-charge [on/off] [options]: Eco-charge command, used with on/off arguments, start time and end times are given with option arguments
 		OPTIONS:
-			-h / --help: Show help
 			-s / --start: Start time (In minutes)
 			-e / --end: End time (In minutes)
 			-c / --connector: Connector ID (default connector ID is 1)
@@ -70,10 +69,6 @@ class Plugin(BaseCommand.BaseCommand):
 		"""
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.__cmd, "result": "failed"}
-
         onOffArgument = argList.pop(0)
         startTime = 0
         endTime = 0

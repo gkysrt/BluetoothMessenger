@@ -85,3 +85,11 @@ class BaseCommand(QtWidgets.QWidget):
         """
         pass
 
+    def isDisplayed(self):
+        """
+        :param :
+        :return: bool
+        This function simply returns if command should be on display (CommandPanel) or not. Override this function and
+        set return value as False to cancel display of command.
+        """
+        return True

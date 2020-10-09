@@ -5,7 +5,7 @@ class Plugin(BaseCommand.BaseCommand):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-    __options = ("-h", "--help")
+    __options = ()
     __cmd = "max-current"
     __name = "Max Current"
 
@@ -26,14 +26,10 @@ class Plugin(BaseCommand.BaseCommand):
         return """max-current [amperes] [options]: Max current command, used to set max current value per phase.
             Second arg is max current value in amperes.
             OPTIONS:
-                -h / --help : Show help
+                -
             """
 
     def execute(self, argList, **kwargs):
-        if '-h' in argList or '--help' in argList:
-            print(self.info())
-            return {"command": self.command(), "result": "failed"}
-
         # TODO: INCOMPLETE
         maxCurrent = int(argList.pop(0))
 
