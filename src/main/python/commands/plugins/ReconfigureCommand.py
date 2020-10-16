@@ -28,8 +28,7 @@ class Plugin(BaseCommand.BaseCommand):
             OPTIONS:
                 -
             e.g
-                reconfigure
-            """
+                reconfigure"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

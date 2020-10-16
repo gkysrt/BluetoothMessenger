@@ -28,8 +28,7 @@ class Command(BaseCommand.BaseCommand):
 		OPTIONS:
             -c / --connector: Specify a connector ID (default connector ID is 1)
         e.g
-            lockable-cable on -c 1
-		"""
+            lockable-cable on -c 1"""
 
 	def execute(self, argList, **kwargs):
 		onOffArgument = argList.pop(0)

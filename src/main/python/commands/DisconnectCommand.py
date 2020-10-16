@@ -26,8 +26,7 @@ class Plugin(BaseCommand.BaseCommand):
             OPTIONS:
                 -
             e.g:
-                disconnect
-            """
+                disconnect"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

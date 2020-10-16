@@ -26,8 +26,7 @@ class Plugin(BaseCommand.BaseCommand):
         return """max-current [amperes] [options]: Max current command, used to set max current value per phase.
             Second arg is max current value in amperes.
             OPTIONS:
-                -
-            """
+                -"""
 
     def execute(self, argList, **kwargs):
         # TODO: INCOMPLETE

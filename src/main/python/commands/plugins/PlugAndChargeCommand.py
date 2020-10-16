@@ -24,12 +24,11 @@ class Command(BaseCommand.BaseCommand):
 
 	@staticmethod
 	def info():
-		return """lockable-cable [on/off] [options]: Plug and charge command, used with on/off arguments
+		return """plug-and-charge [on/off] [options]: Plug and charge command, used with on/off arguments
 		OPTIONS:
             -c / --connector: Specify a connector ID (default connector ID is 1)
         e.g
-            plug-and-charge on -c 1
-		"""
+            plug-and-charge on -c 1"""
 
 	def execute(self, argList, **kwargs):
 		onOffArgument = argList.pop(0)

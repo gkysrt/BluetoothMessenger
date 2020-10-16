@@ -29,8 +29,7 @@ class Plugin(BaseCommand.BaseCommand):
             OPTIONS:
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
-                start-charge --connector 1
-            """
+                start-charge --connector 1"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

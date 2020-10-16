@@ -26,8 +26,7 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """reset-rfid [options]: User card reset command.
             OPTIONS:
-                -
-            """
+                -"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

@@ -45,8 +45,7 @@ class Plugin(BaseCommand.BaseCommand):
                 -m / --minute: Delay amount in minutes
                 -h / --hour: Delay amount in hours
             e.g:
-                delay-charge on -m 60 -c 1
-            """
+                delay-charge on -m 60 -c 1"""
 
     def execute(self, argList, **kwargs):
         if not argList:

@@ -28,8 +28,7 @@ class Plugin(BaseCommand.BaseCommand):
             OPTIONS:
                 -c / --connector: Specify a connector ID (default connector ID is 1)
             e.g
-                resume-charge -c 1
-            """
+                resume-charge -c 1"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

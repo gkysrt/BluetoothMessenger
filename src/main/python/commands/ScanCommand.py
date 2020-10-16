@@ -26,13 +26,12 @@ class Plugin(BaseCommand.BaseCommand):
 	def info():
 		return """scan [options]: Scan area for available bluetooth devices
 		OPTIONS:
-			-n / --name : Show names
+			-n / --name: Show names
 			-f / --flush: Flush cache
 			-d / --duration: Timeout duration (Default 8sec)
-			-c / --class : Show lookup class
-		e.g:
-			scan -d 4 -f -n -c
-			"""
+			-c / --class: Show lookup class
+		e.g
+			scan -d 4 -f -n -c"""
 
 	def execute(self, argList, **kwargs):
 		print("Starting bluetooth scan..")

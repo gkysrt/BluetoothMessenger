@@ -28,8 +28,7 @@ class Command(BaseCommand.BaseCommand):
 			OPTIONS:
 				-
 			e.g:
-				cached-session 791404523
-			"""
+				cached-session 791404523"""
 
 	def execute(self, argList, **kwargs):
 		socket = kwargs.get('socket')

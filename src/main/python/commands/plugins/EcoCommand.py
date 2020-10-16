@@ -60,13 +60,12 @@ class Plugin(BaseCommand.BaseCommand):
     @staticmethod
     def info():
         return """eco-charge [on/off] [options]: Eco-charge command, used with on/off arguments, start time and end times are given with option arguments
-		OPTIONS:
-			-s / --start: Start time (In minutes)
-			-e / --end: End time (In minutes)
-			-c / --connector: Connector ID (default connector ID is 1)
-		e.g
-			eco-charge on -s 1320 -e 360 -c 1
-		"""
+        OPTIONS:
+            -s / --start: Start time (In minutes)
+            -e / --end: End time (In minutes)
+            -c / --connector: Connector ID (default connector ID is 1)
+        e.g
+            eco-charge on -s 1320 -e 360 -c 1"""
 
     def execute(self, argList, **kwargs):
         onOffArgument = argList.pop(0)

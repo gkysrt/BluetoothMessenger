@@ -28,8 +28,7 @@ class Command(BaseCommand.BaseCommand):
             OPTIONS:
                 -
             e.g
-                firmware-update
-            """
+                firmware-update"""
 
     def execute(self, argList, **kwargs):
         socket = kwargs.get('socket')

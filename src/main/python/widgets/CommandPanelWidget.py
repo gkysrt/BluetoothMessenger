@@ -46,10 +46,12 @@ class CommandPanelWidget(QtWidgets.QLabel):
         self.__tabWidget.clear()
 
         for key in cmdDict:
+            scrollWidget = QtWidgets.QScrollArea()
             commandWidget = cmdDict.get(key)
+            scrollWidget.setWidget(commandWidget)
             if commandWidget.isDisplayed():
                 name = commandWidget.name()
-                self.__tabWidget.addTab(commandWidget, name)
+                self.__tabWidget.addTab(scrollWidget, name)
 
     def setCommandModel(self, model):
         self.__commandModel = model

@@ -29,8 +29,7 @@ class Plugin(BaseCommand.BaseCommand):
             OPTIONS:
                 -p / --port : Specify target port  (Default port is 1)
             e.g:
-                connect CC:D3:C1:01:9A:78 --port 1
-            """
+                connect CC:D3:C1:01:9A:78 --port 1"""
 
     def execute(self, argList, **kwargs):
         if '-h' in argList or '--help' in argList:

@@ -26,8 +26,7 @@ class Plugin(BaseCommand.BaseCommand):
     def info():
         return """power-optimizer [on/off] [options]: Power optimizer command
             OPTIONS:
-                -
-            """
+                -"""
 
     def execute(self, argList, **kwargs):
         connectorID = 1

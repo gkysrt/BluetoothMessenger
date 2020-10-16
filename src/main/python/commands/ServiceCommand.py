@@ -25,13 +25,12 @@ class Plugin(BaseCommand.BaseCommand):
 	@staticmethod
 	def info():
 		return """service [options]: Scan target uuid, mac and name for its available services
-			OPTIONS:
-				-u / --uuid : UUID input for target
-				-n / --name: Name input for target
-				-m / --mac: MAC address input for target
-			e.g:
-				service -u 24345-691df-120g5lf -n evc04 -m 34:1G:33:12:66:00
-			"""
+		OPTIONS:
+			-u / --uuid: UUID input for target
+			-n / --name: Name input for target
+			-m / --mac: MAC address inpıt for target
+		e.g:
+			service -u 24345-591df-12043 -n evc04 -m 34:1F:33:12:66:AC"""
 
 	def execute(self, argList, **kwargs):
 		print("Looking for target services..")
